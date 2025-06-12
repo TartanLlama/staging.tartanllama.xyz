@@ -10,9 +10,9 @@ canonicalURL: https://tartanllama.xyz/posts/writing-a-linux-debugger/source-leve
 description: Adding step over, out, and in support to the debugger
 ---
 
-*This series has been expanded into a book! It covers many more topics in much greater detail, written entirely from scratch. You can buy [Building a Debugger](https://nostarch.com/building-a-debugger) now.*
+_This series has been expanded into a book! It covers many more topics in much greater detail, written entirely from scratch. You can buy [Building a Debugger](https://nostarch.com/building-a-debugger) now._
 
------------------------
+---
 
 ## Series index
 
@@ -27,10 +27,9 @@ description: Adding step over, out, and in support to the debugger
 9. [Handling Variables](/posts/writing-a-linux-debugger/handling-variables)
 10. [Advanced Topics](/posts/writing-a-linux-debugger/advanced-topics)
 
--------------------------------
+---
 
 A couple of posts ago we learned about DWARF information and how it lets us relate the machine code to the high-level source. This time we'll be putting this knowledge into practice by adding source-level stepping to our debugger.
-
 
 ## Exposing Instruction-Level Stepping
 
@@ -63,13 +62,11 @@ else if(is_prefix(command, "stepi")) {
  }
 ```
 
-
 With these functions added we can begin to implement our source-level stepping functions.
-
 
 ## Implementing the Steps
 
-We're going to write very pared-down versions of these functions, but real debuggers tend to have the concept of a *thread plan* which encapsulates all of the stepping information. For example, a debugger might have some complex logic to determine breakpoint sites, then have some callback which determines whether or not the step operation has completed. This is a lot of infrastructure to get in place, so we'll take a naive approach. We might end up accidentally stepping over breakpoints, but you can spend some time getting all the details right if you like.
+We're going to write very pared-down versions of these functions, but real debuggers tend to have the concept of a _thread plan_ which encapsulates all of the stepping information. For example, a debugger might have some complex logic to determine breakpoint sites, then have some callback which determines whether or not the step operation has completed. This is a lot of infrastructure to get in place, so we'll take a naive approach. We might end up accidentally stepping over breakpoints, but you can spend some time getting all the details right if you like.
 
 For `step_out`, we'll set a breakpoint at the return address of the function and continue. I don't want to get into the details of stack unwinding yet -- that'll come in a later part -- but it suffices to say for now that the return address is stored 8 bytes after the start of a stack frame. So we'll read the frame pointer and read a word of memory at the relevant address:
 
@@ -275,7 +272,7 @@ int main() {
 
 You should be able to set a breakpoint on the address of `main` and then in, over, and out all over the program. Expect things to break if you try to step out of `main` or into some dynamically linked library.
 
--------------
+---
 
 You can find the code for this post [here](https://github.com/TartanLlama/minidbg/tree/tut_dwarf_step). Next time we'll use our newfound DWARF expertise to implement source-level breakpoints.
 

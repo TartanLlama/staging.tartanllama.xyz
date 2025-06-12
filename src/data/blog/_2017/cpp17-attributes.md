@@ -26,12 +26,12 @@ do_thing_the_new_way(); // No warning
 
 With that out of the way, on to the new attributes!
 
-
 ## `maybe_unused`
 
 `[[maybe_unused]]` suppresses compiler warnings about unused entities. Usually unused functions or variables indicates a programmer error -- if you never use it, why is it there? -- but sometimes they can be intentional, such as variables which are only used in release mode, or functions only called when logging is enabled.
 
 ### Variables
+
 ```cpp
 void emits_warning(bool b) {
      bool result = get_result();
@@ -62,12 +62,11 @@ log_without_warning(); // Warning suppressed by [[maybe_unused]]
 
 I feel like this attribute is more useful to supress compiler warnings than to document your code for others, but at least we now have a standard way to do so.
 
-
 ## `fallthrough`
 
 `[[fallthrough]]` indicates that a fallthrough in a switch statement is intentional. Missing a `break` or `return` in a switch case is a very common programmer error, so compilers usually warn about it, but sometimes a fallthrough can result in some very terse code.
 
-Say we want to process an alert message. If it's green, we do nothing; if it's yellow, we record the alert; if it's orange we record *and* trigger the alarm; if it's red, we record, trigger the alarm and evacuate.
+Say we want to process an alert message. If it's green, we do nothing; if it's yellow, we record the alert; if it's orange we record _and_ trigger the alarm; if it's red, we record, trigger the alarm and evacuate.
 
 ```cpp
 void process_alert (Alert alert) {
@@ -92,7 +91,6 @@ void process_alert (Alert alert) {
 ```
 
 The most important function of `fallthrough` is as documentation for maintainers. The presence of it in the code above shows anyone looking at the code that an orange alert is absolutely supposed to be recorded. Without the `fallthrough` in the `Alert::Red` case, it is not obvious whether a red alert is supposed to trigger the alarm and be recorded, or just evacuate everyone.
-
 
 ## `nodiscard`
 
@@ -124,7 +122,7 @@ lock_guard lock (mutex& m);
 
 Those warnings will help the user notice that `do_something_else` might be given a bad object, or the critical section won't be locked.
 
-----------------------------
+---
 
 Compilers have shipped non-standard extensions to express these concepts for years, but it's great that we now have standard methods to do the same. Leave a comment if you have ideas for other attributes you would like to be added to the language!
 

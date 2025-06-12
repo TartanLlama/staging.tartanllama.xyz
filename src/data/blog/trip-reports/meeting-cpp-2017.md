@@ -20,15 +20,18 @@ The conference was held at the Andel's Hotel in Berlin, which is a very large ve
 
 Some people say they go to conferences for the talks, and for the opportunity to interact with the speakers in the Q&As afterwards. The talks are great, but I went for the people. I had a wonderful time meeting those whom I knew from Twitter or the CppLang Slack, but had never encountered in real life; catching up with those who I've met at other events; and talking to those I'd never had interacted with before. There were around 600 people at the conference, primarily from Europe, but many from further-afield. I didn't have any negative encounters with anyone at the conference, and Jens was very intentional about publicising the Code of Conduct and having a diverse team to enforce it, so it was a very positive atmosphere.
 
-
 ## Day 1
+
 ### Keynote: [Sean Parent](https://twitter.com/SeanParent) -- Better Code: Human interface
+
 After a short introduction from Jens, the conference kicked off with a keynote from Sean Parent. Although he didn't say it in these words, the conclusion I took out of it was that all technology requires some thought about user experience (UX if we're being trendy). Many of us will think of UX as something centred around user interfaces, but it's more than that. If you work on compilers (like I do), then your UX work involves consistent compiler flags, friendly error messages and useful tooling. If you work on libraries, then your API is your experience. Do your functions do the most obvious thing? Are they well-documented? Do they come together to create terse, correct, expressive, efficient code? Sean's plea was for us to consider all of these things, and to embed them into how we think about coding. Of course, it being a talk about good code from Sean Parent, it had some great content about composing standard algorithms. I would definitely recommend checking out the talk if what I've just written sounds thought-provoking to you.
 
 ### [Peter Goldsborough](http://www.goldsborough.me/) -- Deep Learning with C++
+
 Peter gave a very well-structured talk, which went down the stack of technology involved in deep learning -- from high-level libraries to hardware -- showing how it all works in theory. He then went back up the stack showing the practical side, including a few impressive live demos. It covers a lot of content, giving a pretty comprehensive introduction. It does move at a very quick pace though, so you probably don't want to watch this one on 1.5x on YouTube!
 
 ### [Jonathan Boccara](https://twitter.com/JoBoccara) -- Strong types for strong interfaces
+
 This talk was quite a struggle against technical difficulties; starting 15 minutes late after laptop/projector troubles, then having Keynote crash as soon as the introduction was over. Fortunately, Jonathan handled it incredibly well, seeming completely unfazed as he gave an excellent presentation and even finished on time.
 
 The talk itself was about using strong types (a.k.a. opaque typedefs) to strengthen your code's resilience to programmer errors and increase its readability. This was a distillation of some of the concepts which Jonathan has written about in a [series on his blog](https://www.fluentcpp.com/2016/12/05/named-constructors/). He had obviously spent a lot of time rehearsing this talk and put a lot of thought into the visual design of the slides, which I really appreciated.
@@ -43,13 +46,14 @@ My talk was an overview of almost all of the commonly-used parts of systems-leve
 
 I'm a huge metaprogramming nerd, so this talk on using lambdas as a kind of code injection was very interesting for me. Joel started the talk with an introduction to how OCaml allows code injection, and then went on to show how you could emulate this feature in C++ using templates, lambdas and inlining in C++. It turned out that he was going to mostly talk about the indices trick for unpacking tuple-like things, fold expressions (including how to emulate them in C++11/14), and template-driven loop unrolling -- all of which are techniques I'm familiar with. However, I hadn't thought about these tools in the context of compile-time code injection, and Joel presented them very well, so it was still a very enjoyable talk. I particularly enjoyed hearing that he uses these in production in his company in order to fine-tune performance. He showed a number of benchmarks of the linear algebra library he has worked on against another popular implementation which hand-tunes the code for different architectures, and his performance was very competitive. A great talk for demonstrating how templates can be used to optimise your code!
 
-
 ### [Diego Rodriguez-Losada](https://twitter.com/diegorlosada) -- Conan C++ Quiz
 
 This was one of the highlights of the whole conference. The questions were challenging, thought-provoking, and hilarious, and Diego was a fantastic host. He delivered all the content with charisma and wit, and was obviously enjoying himself: maybe my favourite part of the quiz was the huge grin he wore as everyone groaned in incredulity when the questions were revealed. I don't know if the questions will go online at some point, but I'd definitely recommend giving them a shot if you get the chance.
 
 ## Day 2
+
 ### Keynote: [Kate Gregory](https://twitter.com/gregcons) -- It's complicated!
+
 Kate gave a really excellent talk which examined the complexities of writing good code, and those of C++. The slide which I saw the most people get their phones out for said "Is it important to your ego that you're really good at a complicated language?", which I think really hit home for many of us. C++ is like an incredibly intricate puzzle, and when you solve a piece of it, you feel good about it and want to share your success with others. However, sometimes, we can make that success, that understanding, part of our identity. Neither Kate or I are saying that we shouldn't be proud of our domination over the obscure parts of the language, but a bit of introspection about how we reflect this understanding and share it with others will go a long way.
 
 Another very valuable part of her talk was her discussion on the importance of good names, and how being able to describe some idiom or pattern helps us to talk about it and instruct others. Of course, this is what design patterns were originally all about, but Kate frames it in a way which helps build an intuition around how this common language works to make us better programmers. A few days after the conference, this is the talk which has been going around my head the most, so if you watch one talk from this year's conference, you could do a lot worse than this one.
@@ -84,7 +88,9 @@ I thought this was a great session and look forward to helping develop this init
 Juan gave a very energetic, engaging talk about value semantics and his [Redux-](https://redux.js.org/)/[Elm-](http://elm-lang.org/)like C++ library, [lager](https://github.com/arximboldi/lager). He showed how these techniques can be used for writing clear, correct code without shared mutable state. I particularly like the time-travelling debugger which he presented, which allows you to step around the changes to your data model. I don't want to spoil anything, but there's a nice surprise in the talk which gets very meta.
 
 ## Day 3
+
 ### Lightning talks
+
 I spent most of day three watching lightning talks. There were too many to discuss individually, so I'll just mention my favourites.
 
 #### [Arvid Gerstmann](https://twitter.com/ArvidGerstmann) -- A very quick view into a compiler
@@ -112,18 +118,23 @@ Someone who was scheduled to do a lightning talk didn't make the session, so I e
 I really enjoyed the selection of lightning talks. There was a very diverse range of topics, and everything flowed very smoothly without any technical problems. It would have been great if there were more speakers, since some people gave two or even three talks, but that means that more people need to submit! If you're worried about talking, a lightning talk is a great way to practice; if things go terribly wrong, then the worse that can happen is that they move on to the next speaker. It would have also been more fun if it was on the main track, or if there wasn't anything scheduled against them.
 
 ### Secret Lightning Talks
+
 Before the final keynote there was another selection of lightning talks given on the keynote stage. Again, I'll just discuss my favourites.
 
 #### [Guy Davidson](https://twitter.com/hatcat01) -- Diversity and Inclusion
+
 Guy gave a heartfelt talk about diversity in the C++ community, giving reasons why we should care, and what we can do to try and encourage involvement for those in under-represented groups in our communities. This is a topic which is also very important to me, so it was great to see it being given an important place in the conference.
 
 #### [Kate Gregory](https://twitter.com/gregcons) -- Five things I learned when I should have been dying
+
 An even more personal talk was given by Kate about important things she learned when she was given her cancer diagnosis. It was a very inspiring call to not care about the barriers which may perceive to be in the way of achieving something -- like, say, going to talk at a conference -- and instead just trying your best and "doing the work". Her points really resonated with me; I, like many of us, have suffered from a lot of impostor syndrome in my short time in the industry, and talks like this help me to battle through it.
 
 #### [Phil Nash](https://twitter.com/phil_nash) -- A Composable Command Line Parser
+
 Phil's talk was on [Clara](https://github.com/philsquared/Clara), which is a simple, composable command line parser for C++. It was split off from his [Catch](https://github.com/catchorg/Catch2) test framework into its own library, and he's been maintaining it independently of its parent. The talk gave a strong introduction to the library and why you might want to use it instead of one of the other hundreds of command line parsers which are out there. I'm a big fan of the design of Clara, so this was a pleasure to watch.
 
 ### Keynote: [Wouter van Ooijen](https://twitter.com/WouterVanOoijen) -- What can C++ offer embedded, what can embedded offer C++?
+
 To close out the conference, Wouter gave a talk about the interaction between the worlds of C++ and embedded programming. The two have been getting more friendly in recent years thanks to libraries like [Kvasir](https://github.com/kvasir-io/Kvasir) and talks by people like [Dan Saks](https://www.youtube.com/watch?v=D7Sd8A6_fYU) and [Odin Holmes](https://www.youtube.com/watch?v=dxRDWgLIAZg). Wouter started off talking about his work on space rockets, then motivated using C++ templates for embedded programming, showed us examples of how to do it, then finished off talking about what the C++ community should learn from embedded programming. If I'm honest, I didn't enjoy this keynote as much as the others, as I already had an understanding of the techniques he showed, and I was unconvinced by the motivating examples, which seemed like they hadn't been optimised properly (I had to leave early to catch a plane, so please someone tell me if he ended up clarifying them!). If you're new to using C++ for embedded programming, this may be a good introduction.
 
 ## Closing

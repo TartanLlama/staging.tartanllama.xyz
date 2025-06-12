@@ -17,7 +17,6 @@ A try-catch-rethrow with an empty handler does more than a standard block. Here'
 }
 ```
 
-
 ```cpp
 try {
     //Some code which may throw
@@ -28,13 +27,13 @@ try {
 
 Under some circumstances, these two forms are different. Specifically, the latter necessitates stack unwinding, whereas for the former it is implementation-defined whether or not the stack is unwound. The relevant standards quotes:
 
-> [[except.ctor]/1](https://timsong-cpp.github.io/cppwp/n4140/except.ctor#1): 
+> [[except.ctor]/1](https://timsong-cpp.github.io/cppwp/n4140/except.ctor#1):
 >
->As control passes from a *throw-expression* to a handler, destructors are invoked for all automatic objects constructed since the try block was entered. The automatic objects are destroyed in the reverse order of the completion of their construction.
+> As control passes from a _throw-expression_ to a handler, destructors are invoked for all automatic objects constructed since the try block was entered. The automatic objects are destroyed in the reverse order of the completion of their construction.
 
-> [[except.ctor]/3](https://timsong-cpp.github.io/cppwp/n4140/except.ctor#3): 
+> [[except.ctor]/3](https://timsong-cpp.github.io/cppwp/n4140/except.ctor#3):
 >
-> The process of calling destructors for automatic objects constructed on the path from a try block to a *throw-expression* is called “stack unwinding.” [...]
+> The process of calling destructors for automatic objects constructed on the path from a try block to a _throw-expression_ is called “stack unwinding.” [...]
 
 The above paragraphs mandate stack unwinding when control passes to the handler (the `catch` block).
 

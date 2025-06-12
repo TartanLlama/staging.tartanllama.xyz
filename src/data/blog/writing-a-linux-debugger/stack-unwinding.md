@@ -10,10 +10,9 @@ canonicalURL: https://tartanllama.xyz/posts/writing-a-linux-debugger/stack-unwin
 description: Adding support for backtraces
 ---
 
+_This series has been expanded into a book! It covers many more topics in much greater detail, written entirely from scratch. You can buy [Building a Debugger](https://nostarch.com/building-a-debugger) now._
 
-*This series has been expanded into a book! It covers many more topics in much greater detail, written entirely from scratch. You can buy [Building a Debugger](https://nostarch.com/building-a-debugger) now.*
-
------------------------
+---
 
 ## Series index
 
@@ -28,7 +27,7 @@ description: Adding support for backtraces
 9. [Handling Variables](/posts/writing-a-linux-debugger/handling-variables)
 10. [Advanced Topics](/posts/writing-a-linux-debugger/advanced-topics)
 
--------------------------------
+---
 
 Sometimes the most important information you need to know about what your current program state is how it got there. This is typically provided with a `backtrace` command, which gives you the chain of function calls which have lead to the the program is right now. This post will show you how to implement stack unwinding on x86_64 to generate such a backtrace.
 
@@ -169,7 +168,7 @@ Of course, we have to expose this command to the user.
 
 A good way to test this functionality is by writing a test program with a bunch of small functions which call each other. Set a few breakpoints, jump around the code a bit, and make sure that your backtrace is accurate.
 
--------------------
+---
 
 We've come a long way from a program which can merely spawn and attach to other programs. The penultimate post in this series will finish up the implementation of the debugger by supporting the reading and writing of variables. Until then you can find the code for this post [here](https://github.com/TartanLlama/minidbg/tree/tut_unwind).
 

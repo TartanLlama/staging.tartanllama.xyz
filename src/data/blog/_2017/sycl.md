@@ -112,7 +112,6 @@ int main(){
 
 In this post I'll give an introduction on using SYCL to accelerate your C++ code on the GPU.
 
-
 ## Lightning Intro to GPGPU
 
 Before I get started on how to use SYCL, I'll give a brief outline of why you might want to run compute jobs on the GPU for those who are unfamiliar. If you've already used OpenCL, CUDA or similar, feel free to skip ahead.
@@ -125,16 +124,15 @@ Above is a comically simplified diagram of a CPU with four cores. Each core has 
 
 ![GPU architecture](@/assets/images/sycl/gpu.png)
 
-In the GPU, tiny processing elements are grouped into execution units. Each processing element has a bit of memory attached to it, and each execution unit has some memory shared between its processing elements. After that, there's some GPU-wide memory, then the same main memory which the CPU uses. The elements within an execution unit execute in *lockstep*, where each element executes the same instruction on a different piece of data.
+In the GPU, tiny processing elements are grouped into execution units. Each processing element has a bit of memory attached to it, and each execution unit has some memory shared between its processing elements. After that, there's some GPU-wide memory, then the same main memory which the CPU uses. The elements within an execution unit execute in _lockstep_, where each element executes the same instruction on a different piece of data.
 
 The benefit which GPUs bring is the amount of data which can be processed at the same time. If you're on a CPU, maybe you can process a large handful of pixels at a given time if you use multithreading and vector instructions, but GPUs can process orders of magnitude more than this. The sheer size of data which can be processed at once in GPUs makes them very well-suited to applications like graphics (duh), mathematical processing, neural networks, etc.
 
-There are many aspects of GPGPU programming which make it an entirely different beast to everyday CPU programming. For example, transferring data from main memory to the GPU is *slow*. *Really* slow. Like, kill all your performance and get you fired slow. Therefore, the tradeoff with GPU programming is to make as much of the ridiculously high throughput of your accelerator to hide the latency of shipping the data to and from it.
+There are many aspects of GPGPU programming which make it an entirely different beast to everyday CPU programming. For example, transferring data from main memory to the GPU is _slow_. _Really_ slow. Like, kill all your performance and get you fired slow. Therefore, the tradeoff with GPU programming is to make as much of the ridiculously high throughput of your accelerator to hide the latency of shipping the data to and from it.
 
 There are other issues which might not be immediately apparent, like the cost of branching. Since the processing elements in an execution unit work in lockstep, nested branches which cause them to take different paths (divergent control flow) is a real problem. This is often solved by executing all branches for all elements and masking out the unneeded results. That's a polynomial explosion in complexity based on the level of nesting, which is A Bad Thing &trade;. Of course, there are optimizations which can aid this, but the idea stands: simple assumptions and knowledge you bring from the CPU world might cause you big problems in the GPU world.
 
-Before we get back to SYCL, some short pieces of terminology. The *host* is the main CPU running on your machine which executes your normal C or C++ code, and the *device* is what will be running your OpenCL code. A device could be the same as the host, or it could be some accelerator sitting in your machine, a simulator, whatever. A *kernel* is a special function which is the entry point to the code which will run on your device. It will often be supplied with buffers for input and output data which have been set up by the host.
-
+Before we get back to SYCL, some short pieces of terminology. The _host_ is the main CPU running on your machine which executes your normal C or C++ code, and the _device_ is what will be running your OpenCL code. A device could be the same as the host, or it could be some accelerator sitting in your machine, a simulator, whatever. A _kernel_ is a special function which is the entry point to the code which will run on your device. It will often be supplied with buffers for input and output data which have been set up by the host.
 
 ## Back to SYCL
 
@@ -228,7 +226,7 @@ In order to control data sharing and transfer between the host and devices, SYCL
       device_queue.submit([&](cl::sycl::handler &cgh) {/*...*/});
 ```
 
-After setting up all of our data, we can enqueue our actual work. There are a few ways to do this, but a simple method for setting up a parallel execution is to call the `.submit` function on our queue. To this function we pass a *command group functor*[^2] which will be executed when the runtime schedules that task. A command group handler sets up any last resources needed by the kernel and dispatches it.
+After setting up all of our data, we can enqueue our actual work. There are a few ways to do this, but a simple method for setting up a parallel execution is to call the `.submit` function on our queue. To this function we pass a _command group functor_[^2] which will be executed when the runtime schedules that task. A command group handler sets up any last resources needed by the kernel and dispatches it.
 
 [^2]: Hey, "functor" is in the spec, don't @ me.
 
@@ -240,7 +238,7 @@ auto in_accessor = in_buffer.get_access<sycl_read>(cgh);
 auto out_accessor = out_buffer.get_access<sycl_write>(cgh);
 ```
 
-In order to control access to our buffers and to tell the runtime how we will be using the data, we need to create *accessors*. It should be clear that we are creating one accessor for reading from `in_buffer`, and one accessor for writing to `out_buffer`.
+In order to control access to our buffers and to tell the runtime how we will be using the data, we need to create _accessors_. It should be clear that we are creating one accessor for reading from `in_buffer`, and one accessor for writing to `out_buffer`.
 
 ```cpp
 cgh.parallel_for<class VecScalMul>(n_items,
@@ -258,7 +256,6 @@ Now that we've done all the setup, we can actually do some computation on our de
 After this point, our kernel will have completed and we could access `out` and expect to see the correct results.
 
 There are quite a few new concepts at play here, but hopefully you can see the power and expressibility we get using these techniques. However, if you just want to toss some code at your GPU and not worry about the customisation, then you can use the SYCL Parallel STL implementation.
-
 
 ## SYCL Parallel STL
 
@@ -331,10 +328,10 @@ Of course, you can do more than just `transform`. At the time of writing, the SY
 - `inner_product`
 - `transform_reduce`
 
--------------------------------------
+---
 
 That covers things for this short introduction. If you want to keep up to date with developments in SYCL, be sure to check out [sycl.tech](http://sycl.tech/). Notable recent developments have been porting [Eigen](https://github.com/ville-k/sycl_starter) and [Tensorflow](http://deep-beta.co.uk/setting-up-tensorflow-with-opencl-using-sycl/) to SYCL to bring expressive artificial intelligence programming to OpenCL devices. Personally, I'm excited to see how the high-level programming models can be exploited for automatic optimization of heterogeneous programs, and how they can support even higher-level technologies like [HPX](https://github.com/STEllAR-GROUP/hpx) or [SkelCL](https://github.com/skelcl/skelcl).
 
--------------------------------------
+---
 
 [^1]: At the time of writing, I worked for Codeplay, but this post was written in my own time with no suggestion from my employer.

@@ -10,7 +10,6 @@ canonicalURL: https://tartanllama.xyz/posts/trip-reports/accuconf-2017
 description: How I got on at my first conference
 ---
 
-
 I have now returned from my trip to ACCUConf, reeling from five days of talks and tutorials. This is the first conference I've been to on my own, having only met one or two people there prior to the conference. Fortunately, it was a very welcoming environment and I quickly found myself talking to new friends and a bunch of people from the [C++ Slack channel](http://cpplang.diegostamigni.com/).
 
 Talks are beginning to go online at the [ACCUConf YouTube channel](https://www.youtube.com/channel/UCJhay24LTpO1s4bIZxuIqKw/featured), so I thought I'd go through the talks I attended so that you can get an idea of what they were like.
@@ -71,7 +70,7 @@ I already covered Chapel in my previous post, so I won't go over it again, but t
 
 ## Writing games in very modern C++ - Guy Davidson
 
-This was a really brave and impressive talk where Guy implemented [Asteroids](https://en.wikipedia.org/wiki/Asteroids_(video_game)) incrementally as a live demo. He started off walking us through a brief history of video games before grabbing his text editor and hacking away.
+This was a really brave and impressive talk where Guy implemented [Asteroids](<https://en.wikipedia.org/wiki/Asteroids_(video_game)>) incrementally as a live demo. He started off walking us through a brief history of video games before grabbing his text editor and hacking away.
 
 The implementation is based on the [proposal](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2017/p0267r3.pdf) for adding 2D graphics rendering and display to C++. I was a bit unconvinced by the arguments for such a library being standardised rather than relying on third party libraries which can evolve more easily. The API also seemed a bit old fashioned with some global state tracking font renderers and suchlike. However, I don't work on games or 2D graphics, so Guy and the authors of the paper will know much better than me!
 
@@ -99,7 +98,7 @@ In addition to the explanation, he also presented some pretty terrifying benchma
 
 ## Functional C++ For Fun And Profit - Phil Nash
 
-This was a great talk which discussed a lot of different areas where C++ can move into a functional paradigm. Most blog posts and talks I've seen on this subject have just gone into higher order functions, maps, folds and suchlike, but Phil discussed how to implement immutability, composability, and more. This talk also serves as a good bottom-up introduction to the concepts behind the ranges TS and similar composable APIs. Of course, since this was a talk on functional programming, he managed to sneak in the [M](https://en.wikipedia.org/wiki/Monad_(functional_programming)) word.
+This was a great talk which discussed a lot of different areas where C++ can move into a functional paradigm. Most blog posts and talks I've seen on this subject have just gone into higher order functions, maps, folds and suchlike, but Phil discussed how to implement immutability, composability, and more. This talk also serves as a good bottom-up introduction to the concepts behind the ranges TS and similar composable APIs. Of course, since this was a talk on functional programming, he managed to sneak in the [M](<https://en.wikipedia.org/wiki/Monad_(functional_programming)>) word.
 
 ## Modern C++ Design Reloaded - Odin Holmes
 
@@ -119,6 +118,6 @@ I gave a talk about mechanical keyboards and the C++17 keyboard firmware I've be
 
 This talk blew my mind. Herb doesn't want us spewing forth all the details until he can present some of the ideas to the committee, but it's safe to say that if these new reflection and code generation tools get in to the language, C++ won't be the same.
 
----------------------
+---
 
-That's it from me! I really enjoyed this conference and hope that I'll be able to attend in future years. 
+That's it from me! I really enjoyed this conference and hope that I'll be able to attend in future years.

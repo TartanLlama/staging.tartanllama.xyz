@@ -41,7 +41,7 @@ In the above example, we still need to specify the first two arguments, even tho
 
 This post is based on answers from myself and others in [this StackOverflow question](http://stackoverflow.com/questions/29694299/explicitly-use-defaults-for-some-parameters-in-class-template-instantiation/29694738#29694738).
 
------------------------------------
+---
 
 ## Dummy Tags
 
@@ -51,7 +51,7 @@ One option would be to use a dummy tag to stand in for the default, then choose 
 struct use_default{};
 
 template <typename T, typename Default>
-using maybe_sub_default = std::conditional_t<std::is_same<T, use_default>::value, Default, T>; 
+using maybe_sub_default = std::conditional_t<std::is_same<T, use_default>::value, Default, T>;
 
 template <typename T0 = use_default, typename T1 = use_default, typename StringT = use_default>
 struct Options {
@@ -65,15 +65,17 @@ Options<use_default, use_default, std::wstring> b; //RT0 = int, RT1 = long, RStr
 ```
 
 Pros:
+
 - Easy to understand and implement.
 
 Cons:
+
 - `Options<>` and `Options<int, long, std::string>` are different types.
 - `use_default` has to be repeated quite a lot.
 - Can't tell the default arguments by looking at the template declaration.
 - Requires significantly altering the class
 
------------------------------------
+---
 
 ## Manual Member Aliases
 
@@ -82,7 +84,7 @@ Another option is to provide member alias templates which handle modifying the t
 ```cpp
 template <typename T0 = int, typename T1 = long, typename StringT = std::string>
 struct Options {
-    template <typename T> 
+    template <typename T>
     using WithT0 = Options<T, T1, StringT>;
 
     template <typename T>
@@ -97,19 +99,20 @@ Options<>::WithT1<float>::WithStringT<std::wstring> b; //Options<int,float,std::
 ```
 
 Pros:
+
 - Very terse usage.
 - Default arguments are in the declaration.
 
 Cons:
+
 - Requires significantly altering the class.
 - Need to repeat the other arguments in all the `WithX` alias templates.
 
----------------------------------
+---
 
 ## Don't Touch My Class
 
 It would be good to have a solution which doesn't require heavily altering the class (especially when there are many parameters). The following code is pretty complex, but does the job (you could use your favourite metaprogramming library to make it more simple).
-
 
 ```cpp
 namespace detail {
@@ -129,7 +132,7 @@ namespace detail {
         using type = T<Ts...>;
     };
 
-    //replaces the type used in a template instantiation of In 
+    //replaces the type used in a template instantiation of In
     //at index ReplateAt with the type ReplaceWith
     template <size_t ReplaceAt, typename ReplaceWith, class In>
     struct with_n;
@@ -149,30 +152,31 @@ template <size_t ReplaceAt, typename ReplaceWith, class In>
 using with_n = typename detail::with_n<ReplaceAt, ReplaceWith, In>::type;
 
 with_n<0, float, Options<>> a; //Options<float, int, std::string>
-with_n<2, std::wstring, 
+with_n<2, std::wstring,
    with_n<0, float, Options<>>> b; //Options<float, int, std::wstring>
 ```
 
 Pros:
+
 - Doesn't require changing the class.
 - Little repetition
 
 Cons:
+
 - Syntax isn't as nice as the previous solution.
 
---------------------------------
+---
 
 ## Frankenstien
 
 What we really want is a solution which combines the advantages of the above two options. We can achieve this by wrapping `with_n` in a template class and inheriting from it.
-
 
 ```cpp
 template <typename T>
 struct EnableDefaultSetting {
     template <size_t ReplaceAt, typename ReplaceWith>
     using with_n = typename detail::with_n<ReplaceAt, ReplaceWith, T>::type;
-     
+
     //Some convenience helpers (optional)
     template <typename ReplaceWith> using with_0 = with_n<0, ReplaceWith>;
     template <typename ReplaceWith> using with_1 = with_n<1, ReplaceWith>;
@@ -189,9 +193,11 @@ Options<>::with_0<float>::with_2<std::wstring> b; //Options<float, int, std::wst
 ```
 
 Pros:
+
 - Terse syntax.
 - Adding support only requires inheriting from a type.
 
 Cons:
+
 - Traits don't have descriptive names.
 - Requires modifying the class.

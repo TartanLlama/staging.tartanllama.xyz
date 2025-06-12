@@ -21,7 +21,7 @@ auto [x,y,z] = f(); // x has type T1, y has type T2, z has type T3
 
 This is a very powerful and expressive feature, but the most interesting element for me is the ability to add support for this to your own classes. This post is a short tutorial on how to do this, mostly for my own future reference.
 
------------------------
+---
 
 ## Built-in support
 
@@ -53,7 +53,7 @@ auto [a, b, c] = bar();
 
 If you have more complex classes, or want to wrap/process members before exposing them, you'll need to add support yourself. Fortunately, this is rather elegantly built on top of existing mechanisms. All you need to do is tell the compiler how many variables you want to expose, the types of them, and how to get at the values. This is done through the `std::tuple_size`, `std::tuple_element`, and `get` utilities.
 
--------------------------------------
+---
 
 ## Supporting other classes
 
@@ -116,7 +116,7 @@ namespace std {
 }
 ```
 
---------------------------------
+---
 
 With all of that done, we can now decompose `Config` like so:
 

@@ -10,7 +10,6 @@ canonicalURL: https://tartanllama.xyz/posts/guaranteed-copy-elision
 description: It should be "deferred temporary materialization"
 ---
 
-
 C++17 merged in a paper called [Guaranteed copy elision through simplified value categories](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2015/p0135r0.html). The changes mandate that no copies or moves take place in some situations where they were previously allowed, e.g.:
 
 ```cpp
@@ -22,13 +21,13 @@ non_moveable make() { return {}; }
 non_moveable x = make(); //compiles in C++17, error in C++11/14
 ```
 
-You can see this behavior in compiler versions [Visual Studio 2017](https://aka.ms/cppvsdownload) 15.6, Clang 4, GCC 7, and above. 
+You can see this behavior in compiler versions [Visual Studio 2017](https://aka.ms/cppvsdownload) 15.6, Clang 4, GCC 7, and above.
 
 Despite the name of the paper and what you might read on the Internet, **the new rules do not guarantee copy elision**. Instead, the new value category rules are defined such that no copy exists in the first place. Understanding this nuance gives a deeper understanding of the current C++ object model, so I will explain the pre-C++17 rules, what changes were made, and how they solve real-world problems.
 
 ## Value Categories
 
-To understand the before-and-after, we first need to understand what value categories are (I'll explain copy elision in the next section). Continuing the theme of C++ misnomers, value categories are *not* categories of values. They are characteristics of expressions. Every expression in C++ has one of three value categories: *lvalue*, *prvalue* (pure rvalue), or *xvalue* (eXpring value). There are then two parent categories: all lvalues and xvalues are *glvalues*, and all prvalues and xvalues are *rvalues*.
+To understand the before-and-after, we first need to understand what value categories are (I'll explain copy elision in the next section). Continuing the theme of C++ misnomers, value categories are _not_ categories of values. They are characteristics of expressions. Every expression in C++ has one of three value categories: _lvalue_, _prvalue_ (pure rvalue), or _xvalue_ (eXpring value). There are then two parent categories: all lvalues and xvalues are _glvalues_, and all prvalues and xvalues are _rvalues_.
 
 ![diagram expressing the taxonomy described above](@/assets/images/guaranteed-copy-elision/valcat.png)
 
@@ -43,21 +42,21 @@ For an explanation of what these are, we can look at the standard ([`C++17 [basi
 Some examples:
 
 ```cpp
-std::string s; 
-s //lvalue: identity of an object 
-s + " cake" //prvalue: could perform initialization/compute a value 
+std::string s;
+s //lvalue: identity of an object
+s + " cake" //prvalue: could perform initialization/compute a value
 
-std::string f(); 
-std::string& g(); 
-std::string&& h(); 
+std::string f();
+std::string& g();
+std::string&& h();
 
-f() //prvalue: could perform initialization/compute a value 
-g() //lvalue: identity of an object 
-h() //xvalue: denotes an object whose resources can be reused 
+f() //prvalue: could perform initialization/compute a value
+g() //lvalue: identity of an object
+h() //xvalue: denotes an object whose resources can be reused
 
-struct foo { 
-    std::string s; 
-}; 
+struct foo {
+    std::string s;
+};
 
 foo{}.s //xvalue: denotes an object whose resources can be reused
 ```
@@ -70,7 +69,7 @@ It's a prvalue. Its type is `std::string`. It has the value `"a pony"`. It names
 
 That last one is the key point I want to talk about, and it's the real difference between the C++11 rules and C++17. In C++11, `std::string{"a pony"}` does indeed name a temporary. From `C++11 [class.temporary]/1`:
 
-Temporaries of class type are created in various contexts: binding a reference to a prvalue, returning a prvalue, a conversion that creates a prvalue, throwing an exception, entering a handler, and in some initializations. 
+Temporaries of class type are created in various contexts: binding a reference to a prvalue, returning a prvalue, a conversion that creates a prvalue, throwing an exception, entering a handler, and in some initializations.
 
 Let's look at how this interacts with this code:
 
@@ -83,7 +82,7 @@ copyable make() { return {}; }
 copyable x = make();
 ```
 
-`make()` results in a temporary. This temporary will be moved into `x`. Since `copyable` has no move constructor, this calls the copy constructor. However, this copy is unnecessary since the object constructed on the way out of `make` will never be used for anything else. The standard allows this copy to be *elided* by constructing the return value at the call-site rather than in `make` (`C++11 [class.copy]`). This is called *copy elision*.
+`make()` results in a temporary. This temporary will be moved into `x`. Since `copyable` has no move constructor, this calls the copy constructor. However, this copy is unnecessary since the object constructed on the way out of `make` will never be used for anything else. The standard allows this copy to be _elided_ by constructing the return value at the call-site rather than in `make` (`C++11 [class.copy]`). This is called _copy elision_.
 
 The unfortunate part is this: **even if all copies of the type are elided, the constructor still must exist**.
 
@@ -128,7 +127,7 @@ As noted in the value category descriptions earlier, prvalues exist for purposes
 
 That's a better name for this feature. Not guaranteed copy elision. **Deferred temporary materialization**.
 
-Temporary materialization creates a temporary object from a prvalue, resulting in an xvalue. The most common places it occurs are when binding a reference to or performing member access on a prvalue. If a reference is bound to the prvalue, the materialized temporary’s lifetime is extended to that of the reference (this is unchanged from C++11, but worth repeating). If a prvalue initializes a class type of the same type as the prvalue, then the destination object is initialized directly; no temporary required. 
+Temporary materialization creates a temporary object from a prvalue, resulting in an xvalue. The most common places it occurs are when binding a reference to or performing member access on a prvalue. If a reference is bound to the prvalue, the materialized temporary’s lifetime is extended to that of the reference (this is unchanged from C++11, but worth repeating). If a prvalue initializes a class type of the same type as the prvalue, then the destination object is initialized directly; no temporary required.
 
 Some examples:
 
@@ -154,7 +153,7 @@ I said at the start that understanding the new rules would grant a deeper unders
 
 The key point is that in C++11, prvalues are not "pure" in a sense. That is, the expression `std::string{"a pony"}` names some temporary `std::string` object with the contents `"a pony"`. It's not the pure notion of the list of characters "a pony". It's not the Platonic ideal of "a pony".
 
-In C++17, however, `std::string{"a pony"}` *is* the Platonic ideal of "a pony". It's not a real object in C++'s object model, it's some elusive, amorphous idea which can be passed around your program, only being given form when initializing some result object, or materializing a temporary. **C++17's prvalues are purer prvalues**.
+In C++17, however, `std::string{"a pony"}` _is_ the Platonic ideal of "a pony". It's not a real object in C++'s object model, it's some elusive, amorphous idea which can be passed around your program, only being given form when initializing some result object, or materializing a temporary. **C++17's prvalues are purer prvalues**.
 
 If this all sounds a bit abstract, that's okay, but internalising this idea will make it easier to reason about aspects of your program. Consider a simple example:
 
@@ -183,7 +182,7 @@ int main() {
 }
 ```
 
-In the C++11 model, `return "a pony";` initializes the temporary return object of `a()`, which move-constructs the temporary return object of `b()`, which move-constructs `x`. All the moves are likely elided by the compiler. 
+In the C++11 model, `return "a pony";` initializes the temporary return object of `a()`, which move-constructs the temporary return object of `b()`, which move-constructs `x`. All the moves are likely elided by the compiler.
 
 In the C++17 model, `return "a pony";` initializes the result object of `a()`, which is the result object of `b()`, which is `x`.
 
@@ -198,4 +197,4 @@ is identical to `auto x = /* expression */;`. For any `T`.
 
 ## Closing
 
-The "guaranteed copy elision" rules do not guarantee copy elision; instead they purify prvalues such that the copy doesn't exist in the first place. Next time you hear or read about "guaranteed copy elision", think instead about *deferred temporary materialization*.
+The "guaranteed copy elision" rules do not guarantee copy elision; instead they purify prvalues such that the copy doesn't exist in the first place. Next time you hear or read about "guaranteed copy elision", think instead about _deferred temporary materialization_.

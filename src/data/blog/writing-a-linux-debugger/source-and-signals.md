@@ -10,9 +10,9 @@ canonicalURL: https://tartanllama.xyz/posts/writing-a-linux-debugger/source-and-
 description: Implementing source-level DWARF primitives and printing out source context
 ---
 
-*This series has been expanded into a book! It covers many more topics in much greater detail, written entirely from scratch. You can buy [Building a Debugger](https://nostarch.com/building-a-debugger) now.*
+_This series has been expanded into a book! It covers many more topics in much greater detail, written entirely from scratch. You can buy [Building a Debugger](https://nostarch.com/building-a-debugger) now._
 
------------------------
+---
 
 ## Series index
 
@@ -27,7 +27,7 @@ description: Implementing source-level DWARF primitives and printing out source 
 9. [Handling Variables](/posts/writing-a-linux-debugger/handling-variables)
 10. [Advanced Topics](/posts/writing-a-linux-debugger/advanced-topics)
 
--------------------------------
+---
 
 In the the last part we learned about DWARF information and how it can be used to read variables and associate our high-level source code with the machine code which is being executed. In this part we'll put this into practice by implementing some DWARF primitives which will be used by the rest of our debugger. We'll also take this opportunity to get our debugger to print out the current source context when a breakpoint is hit.
 
@@ -57,7 +57,6 @@ private:
 ```
 
 `open` is used instead of `std::ifstream` because the elf loader needs a UNIX file descriptor to pass to `mmap` so that it can map the file into memory rather than reading it a bit at a time.
-
 
 ## Debug Information Primitives
 
@@ -144,7 +143,6 @@ uint64_t debugger::offset_load_address(uint64_t addr) {
 }
 ```
 
-
 ## Printing Source
 
 When we hit a breakpoint or step around our code, we'll want to know where in the source we end up.
@@ -185,7 +183,6 @@ void debugger::print_source(const std::string& file_name, unsigned line, unsigne
 ```
 
 Now that we can print out source, we'll need to hook this into our debugger. A good place to do this is when the debugger gets a signal from a breakpoint or (eventually) single step. While we're at this, we might want to add some better signal handling to our debugger.
-
 
 ## Better Signal Handling
 
@@ -308,10 +305,9 @@ void debugger::step_over_breakpoint() {
 }
 ```
 
-
 Now you should be able to set a breakpoint at some address, run the program and see the source code printed out with the currently executing line marked with a cursor.
 
---------------
+---
 
 Next time we'll be adding the ability to set source-level breakpoints. In the meantime, you can get the code for this post [here](https://github.com/TartanLlama/minidbg/tree/tut_source).
 

@@ -10,10 +10,9 @@ canonicalURL: https://tartanllama.xyz/posts/writing-a-linux-debugger/breakpoints
 description: Implementing breakpoints in the debugger
 ---
 
-*This series has been expanded into a book! It covers many more topics in much greater detail, written entirely from scratch. You can buy [Building a Debugger](https://nostarch.com/building-a-debugger) now.*
+_This series has been expanded into a book! It covers many more topics in much greater detail, written entirely from scratch. You can buy [Building a Debugger](https://nostarch.com/building-a-debugger) now._
 
------------------------
-
+---
 
 ## Series index
 
@@ -28,7 +27,7 @@ description: Implementing breakpoints in the debugger
 9. [Handling Variables](/posts/writing-a-linux-debugger/handling-variables)
 10. [Advanced Topics](/posts/writing-a-linux-debugger/advanced-topics)
 
--------------------------------
+---
 
 In the first part of this series we wrote a small process launcher as a base for our debugger. In this post we'll learn how breakpoints work in x86 Linux and augment our tool with the ability to set them.
 
@@ -44,12 +43,11 @@ I said above that software breakpoints are set by modifying the executing code o
 
 The answer to the first question is, of course, `ptrace`. We've previously used it to set up our program for tracing and continuing its execution, but we can also use it to read and write memory.
 
-The modification we make has to cause the processor to halt and signal the program when the breakpoint address is executed. On x86 this is accomplished by overwriting the instruction at that address with the `int 3` instruction. x86 has an *interrupt vector table* which the operating system can use to register handlers for various events, such as page faults, protection faults, and invalid opcodes. It's kind of like registering error handling callbacks, but right down at the hardware level. When the processor executes the `int 3` instruction, control is passed to the breakpoint interrupt handler, which -- in the case of Linux -- signals the process with a `SIGTRAP`. You can see this process in the diagram below, where we overwrite the first byte of the `mov` instruction with `0xcc`, which is the instruction encoding for `int 3`.
+The modification we make has to cause the processor to halt and signal the program when the breakpoint address is executed. On x86 this is accomplished by overwriting the instruction at that address with the `int 3` instruction. x86 has an _interrupt vector table_ which the operating system can use to register handlers for various events, such as page faults, protection faults, and invalid opcodes. It's kind of like registering error handling callbacks, but right down at the hardware level. When the processor executes the `int 3` instruction, control is passed to the breakpoint interrupt handler, which -- in the case of Linux -- signals the process with a `SIGTRAP`. You can see this process in the diagram below, where we overwrite the first byte of the `mov` instruction with `0xcc`, which is the instruction encoding for `int 3`.
 
 ![breakpoint](@/assets/images/writing-a-linux-debugger/breakpoint.png)
 
 The last piece of the puzzle is how the debugger is notified of the break. If you remember back in the previous post, we can use `waitpid` to listen for signals which are sent to the debugee. We can do exactly the same thing here: set the breakpoint, continue the program, call `waitpid` and wait until the `SIGTRAP` occurs. This breakpoint can then be communicated to the user, perhaps by printing the source location which has been reached, or changing the focused line in a GUI debugger.
-
 
 ## Implementing Software Breakpoints
 
@@ -106,7 +104,6 @@ void breakpoint::disable() {
 }
 ```
 
-
 ## Adding Breakpoints to the Debugger
 
 We'll make three changes to our debugger class to support setting breakpoints through the user interface:
@@ -116,7 +113,6 @@ We'll make three changes to our debugger class to support setting breakpoints th
 3. Add a `break` command to our `handle_command` function
 
 I'll store my breakpoints in a `std::unordered_map<std::intptr_t, breakpoint>` structure so that it's easy and fast to check if a given address has a breakpoint on it and, if so, retrieve that breakpoint object.
-
 
 ```cpp
 class debugger {
@@ -162,11 +158,9 @@ void debugger::handle_command(const std::string& line) {
 
 I've simply removed the first two characters of the string and called `std::stol` on the result, but feel free to make the parsing more robust. `std::stol` optionally takes a radix to convert from, which is handy for reading in hexadecimal.
 
-
 ## Continuing from the Breakpoint
 
 If you try this out, you might notice that if you continue from the breakpoint, nothing happens. That's because the breakpoint is still set in memory, so it's hit repeatedly. The simple solution is to disable the breakpoint, single step, re-enable it, then continue. Unfortunately we'd also need to modify the program counter to point back before the breakpoint, so we'll leave this until the next post where we'll learn about manipulating registers.
-
 
 ## Testing
 
@@ -231,7 +225,7 @@ Here's the maps file for my program:
 
 The important address is the first one noted for `/path/to/hello`, which is `0x08000000`. That's the load address of the binary. If you add the breakpoint offsets to that base address, you'll get the real addresses to set breakpoints at.
 
----------------------
+---
 
 You should now have a debugger which can launch a program and allow the user to set breakpoints on memory addresses. Next time we'll add the ability to read from and write to memory and registers. Again, let me know in the comments if you have any issues.
 

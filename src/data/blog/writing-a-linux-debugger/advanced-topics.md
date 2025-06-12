@@ -10,9 +10,9 @@ canonicalURL: https://tartanllama.xyz/posts/writing-a-linux-debugger/advanced-to
 description: Future work for those suitably brave
 ---
 
-*This series has been expanded into a book! It covers many more topics in much greater detail, written entirely from scratch. You can buy [Building a Debugger](https://nostarch.com/building-a-debugger) now.*
+_This series has been expanded into a book! It covers many more topics in much greater detail, written entirely from scratch. You can buy [Building a Debugger](https://nostarch.com/building-a-debugger) now._
 
------------------------
+---
 
 ## Series index
 
@@ -27,8 +27,7 @@ description: Future work for those suitably brave
 9. [Handling Variables](/posts/writing-a-linux-debugger/handling-variables)
 10. [Advanced Topics](/posts/writing-a-linux-debugger/advanced-topics)
 
--------------------------------
-
+---
 
 We're finally here at the last post of the series! This time I'll be giving a high-level overview of some more advanced concepts in debugging: remote debugging, shared library support, expression evaluation, and multi-threaded support. These ideas are more complex to implement, so I won't walk through how to do so in detail, but I'm happy to answer questions about these concepts if you have any.
 
@@ -38,7 +37,7 @@ Remote debugging is very useful for embedded systems or debugging the effects of
 
 ![debugarch](@/assets/images/writing-a-linux-debugger/debugarch.png)
 
-The debugger is the component which we interact with through the command line. Maybe if you're using an IDE there'll be another layer on top which communicates with the debugger through the *machine interface*. On the target machine (which may be the same as the host) there will be a *debug stub*, which in theory is a very small wrapper around the OS debug library which carries out all of your low-level debugging tasks like setting breakpoints on addresses. I say "in theory" because stubs are getting larger and larger these days. The LLDB debug stub on my machine is 7.6MB, for example. The debug stub communicates with the debugee process using some OS-specific features (in our case, `ptrace`), and with the debugger though some remote protocol.
+The debugger is the component which we interact with through the command line. Maybe if you're using an IDE there'll be another layer on top which communicates with the debugger through the _machine interface_. On the target machine (which may be the same as the host) there will be a _debug stub_, which in theory is a very small wrapper around the OS debug library which carries out all of your low-level debugging tasks like setting breakpoints on addresses. I say "in theory" because stubs are getting larger and larger these days. The LLDB debug stub on my machine is 7.6MB, for example. The debug stub communicates with the debugee process using some OS-specific features (in our case, `ptrace`), and with the debugger though some remote protocol.
 
 The most common remote protocol for debugging is the GDB remote protocol. This is a text-based packet format for communicating commands and information between the debugger and debug stub. I won't go into detail about it, but you can read all you could want to know about it [here](https://sourceware.org/gdb/onlinedocs/gdb/Remote-Protocol.html). If you launch LLDB and execute the command `log enable gdb-remote packets` then you'll get a trace of all packets sent through the remote protocol. On GDB you can write `set remotelogfile <file>` to do the same.
 
@@ -52,10 +51,9 @@ $Z0,400570,1#43
 
 The GDB remote protocol is very easy to extend for custom packets, which is very useful for implementing platform- or language-specific functionality.
 
-
 ## Shared Library and Dynamic Loading Support
 
-The debugger needs to know what shared libraries have been loaded by the debuggee so that it can set breakpoints, get source-level information and symbols, etc. As well as finding libraries which have been dynamically linked against, the debugger must track libraries which are loaded at runtime through `dlopen`. To facilitate this, the dynamic linker maintains a *rendezvous structure*. This structure maintains a linked list of shared library descriptors, along with a pointer to a function which is called whenever the linked list is updated. This structure is stored where the `.dynamic` section of the ELF file is loaded, and is initialized before program execution.
+The debugger needs to know what shared libraries have been loaded by the debuggee so that it can set breakpoints, get source-level information and symbols, etc. As well as finding libraries which have been dynamically linked against, the debugger must track libraries which are loaded at runtime through `dlopen`. To facilitate this, the dynamic linker maintains a _rendezvous structure_. This structure maintains a linked list of shared library descriptors, along with a pointer to a function which is called whenever the linked list is updated. This structure is stored where the `.dynamic` section of the ELF file is loaded, and is initialized before program execution.
 
 A simple tracing algorithm is this:
 
@@ -68,7 +66,6 @@ A simple tracing algorithm is this:
 - The tracer infinitely loops, continuing the program and waiting for a signal until the tracee signals that it has exited.
 
 I've written a small demonstration of these concepts, which you can find [here](https://github.com/TartanLlama/dltrace). I can do a more detailed write up of this in the future if anyone is interested.
-
 
 ## Expression Evaluation
 
@@ -105,7 +102,6 @@ Once you've got that, you can look in `/proc/<pid>/task/` and read the memory ma
 GDB uses `libthread_db`, which provides a bunch of helper functions so that you don't need to do all the parsing and processing yourself. Setting up this library is pretty weird and I won't show how it works here, but you can go and read [this tutorial](http://timetobleed.com/notes-about-an-odd-esoteric-yet-incredibly-useful-library-libthread_db/) if you'd like to use it.
 
 The most complex part of multithreaded support is modelling the thread state in the debugger, particularly if you want to support [non-stop mode](https://sourceware.org/gdb/onlinedocs/gdb/Non_002dStop-Mode.html) or some kind of heterogeneous debugging where you have more than just a CPU involved in your computation.
-
 
 ## The End!
 

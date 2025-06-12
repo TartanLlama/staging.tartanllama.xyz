@@ -10,9 +10,9 @@ canonicalURL: https://tartanllama.xyz/posts/writing-a-linux-debugger/setup
 description: Beginning the journey of writing a Linux debugger
 ---
 
-*This series has been expanded into a book! It covers many more topics in much greater detail, written entirely from scratch. You can buy [Building a Debugger](https://nostarch.com/building-a-debugger) now.*
+_This series has been expanded into a book! It covers many more topics in much greater detail, written entirely from scratch. You can buy [Building a Debugger](https://nostarch.com/building-a-debugger) now._
 
------------------------
+---
 
 Debuggers are one of the most valuable tools in any developer's kit. However, although these tools are in such widespread use, there aren't a lot of resources which tell you how they work and how to write one[^1], especially when compared to other toolchain technologies like compilers. In this post series we'll learn what makes debuggers tick and write one for debugging Linux programs.
 
@@ -46,7 +46,7 @@ In the final part I'll also outline how you could add the following to your debu
 
 I'll be focusing on C and C++ for this project, but it should work just as well with any language which compiles down to machine code and outputs standard DWARF debug information (if you don't know what that is yet, don't worry, this will be covered soon). Additionally, my focus will be on getting something up and running which works most of the time, so things like robust error handling will be eschewed in favour of simplicity.
 
--------------------------------
+---
 
 ## Series index
 
@@ -61,7 +61,7 @@ I'll be focusing on C and C++ for this project, but it should work just as well 
 9. [Handling Variables](/posts/writing-a-linux-debugger/handling-variables)
 10. [Advanced Topics](/posts/writing-a-linux-debugger/advanced-topics)
 
--------------------------------
+---
 
 ## Setting Up
 
@@ -117,7 +117,6 @@ The request we send in the above code, `PTRACE_TRACEME`, indicates that this pro
 Next, we call `execl`, which is one of the many `exec` flavours. We execute the given program, passing the name of it as a command-line argument and a `nullptr` to terminate the list. You can pass any other arguments needed to execute your program here if you like.
 
 After we've done this, we're finished with the child process; we'll let it keep running until we're finished with it.
-
 
 ## Adding the Debugger Loop
 
@@ -220,8 +219,7 @@ void debugger::continue_execution() {
 
 For now our `continue_execution` function will use `ptrace` to tell the process to continue, then `waitpid` until it's signalled.
 
---------------
-
+---
 
 Now you should be able to compile some C or C++ program, run it through your debugger, see it halting on entry, and be able to continue execution from your debugger. In the next part we'll learn how to get our debugger to set breakpoints.
 
@@ -229,6 +227,6 @@ You can find the code for this post [here](https://github.com/TartanLlama/minidb
 
 [Next post](/posts/writing-a-linux-debugger/breakpoints)
 
----------------------
+---
 
 [^1]: Here are some pre-existing ones if you want other resources: [1](http://eli.thegreenplace.net/2011/01/23/how-debuggers-work-part-1) [2](http://t-a-w.blogspot.co.uk/2007/03/how-to-code-debuggers.html) [3](https://www.codeproject.com/Articles/43682/Writing-a-basic-Windows-debugger) [4](http://system.joekain.com/debugger/)

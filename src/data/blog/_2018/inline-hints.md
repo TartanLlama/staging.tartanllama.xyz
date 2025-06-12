@@ -19,7 +19,7 @@ Of course, `inline` has mandatory effects on linkage and whatnot, but this post 
 
 However, the point of this article isn't to give you good rules for when to use `inline`, because as much as I like to debate technical minutiae, your compiler will likely be a better judge than you anyway. Instead I want to show that if you want to know how compilers or standard libraries implement things, you can just go look! It might be daunting the first time, but getting a knack for finding things in large code bases and understanding your tools can pay off. I'll be diving into the codebases for Clang and GCC to see how they handle inlining hints and hopefully convince you that you can do the same for questions which you have about your tools.
 
---------
+---
 
 ## Clang
 
@@ -53,7 +53,7 @@ By just looking at this code without knowledge of all the other functions, we wo
 ```cpp
     if (Callee.hasFnAttribute(Attribute::InlineHint))
       Threshold = MaxIfValid(Threshold, Params.HintThreshold);
-```      
+```
 
 So now we know that LLVM takes the presence of an `inlinehint` attribute into account in its inlining cost model. But does Clang produce that attribute? Let's look for that attribute in the Clang sources:
 
@@ -75,7 +75,6 @@ So now we know that LLVM takes the presence of an `inlinehint` attribute into ac
 ```
 
 The above code from `clang/lib/CodeGen/CodeGenModule.cpp` shows Clang setting the `inlinehint` attribute. It will also possibly mark declarations as `noinline` if `inline` was not supplied (depending on compiler flags). Now we can look for code which affects `isInlineSpecified`:
-
 
 ```cpp
 // clang/include/clang/Sema/DeclSpec.h
@@ -108,11 +107,11 @@ The above snippets show the functions which set and retrieve whether something w
 
 So now we know that Clang propagates the presence of the `inline` keyword through to LLVM using the `inlinehint` attribute, and that LLVM takes this into account in its cost model for inlining. Our detective work has been successful!
 
----------------------
+---
 
 ## GCC
 
-How about GCC? The source for GCC is a fair bit less accessible than that of LLVM, but we can still make an attempt. After a bit of searching, I found that the `DECL_DECLARED_INLINE_P` macro seemed to be used lots of places which were relevant. So we can look for where that's set: 
+How about GCC? The source for GCC is a fair bit less accessible than that of LLVM, but we can still make an attempt. After a bit of searching, I found that the `DECL_DECLARED_INLINE_P` macro seemed to be used lots of places which were relevant. So we can look for where that's set:
 
 ```cpp
     // c/c-decl.c:grokdeclarator
@@ -147,7 +146,7 @@ How about GCC? The source for GCC is a fair bit less accessible than that of LLV
 We can then look for uses of this macro which seem to affect the behaviour of the inliner. Here are a few:
 
 ```cpp
-  //ipa-inline.c:want_inline_small_function_p    
+  //ipa-inline.c:want_inline_small_function_p
 
   /* Do fast and conservative check if the function can be good
      inline candidate.  At the moment we allow inline hints to
@@ -165,7 +164,7 @@ We can then look for uses of this macro which seem to affect the behaviour of th
 
 
   //ipa-inline.c:edge_badness
-  
+
   /* ... and do not overwrite user specified hints.   */
   && (!DECL_DECLARED_INLINE_P (edge->callee->decl)
       || DECL_DECLARED_INLINE_P (caller->decl)))))
@@ -182,7 +181,7 @@ We can then look for uses of this macro which seem to affect the behaviour of th
 
 That's some evidence that the keyword is being taken into account. If we want to get a better idea of all of the effects, then we now have a starting point from which to conduct our expectations.
 
-----------
+---
 
 ## Conclusion
 
@@ -193,6 +192,6 @@ I hope I've managed to convince you of two things:
 
 If you're actually going to try and optimize your code using `inline` then Do The Right Thing And Measure It[^1]. See what your compiler actually generates. Profile your code to make sure you're opmitizing something that needs optimizing. Don't guess.
 
--------------
+---
 
 [^1]: DTRTAMI (dee-tee-arr-tamee) kinda has a ring to it.

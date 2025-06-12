@@ -8,9 +8,8 @@ tags:
   - C++17
   - Metaprogramming
 canonicalURL: https://tartanllama.xyz/posts/if-constexpr
-description: Making your code simpler and more maintainable 
+description: Making your code simpler and more maintainable
 ---
-
 
 ## Introduction
 
@@ -26,7 +25,7 @@ auto get_value(T t) {
 }
 ```
 
-The condition `std::is_pointer_v<T>` checks whether or not `T` is a pointer type. Either the `if` or `else` clause will be discarded *at compile-time* depending on how the condition evaluates. For example, `get_value<int>` is essentially equivalent to
+The condition `std::is_pointer_v<T>` checks whether or not `T` is a pointer type. Either the `if` or `else` clause will be discarded _at compile-time_ depending on how the condition evaluates. For example, `get_value<int>` is essentially equivalent to
 
 ```cpp
 auto get_value(int t) {
@@ -43,7 +42,6 @@ auto get_value(int* t) {
 ```
 
 This post will show how to use `if constexpr` to simplify your template code and replace horrible macro code.
-
 
 ## Simplifying template code
 
@@ -74,7 +72,7 @@ auto get_value(T t, std::false_type) {
 
 template <typename T>
 auto get_value(T t) {
-    return get_value(t, std::is_pointer<T>{}); 
+    return get_value(t, std::is_pointer<T>{});
 }
 ```
 
@@ -164,7 +162,6 @@ auto get() {
 
 Not only is this a win in terms of lines of code, it also decreases syntactic noise and increases source code locality.
 
-
 ## Replacing #ifdef blocks
 
 Another great use-case of `constexpr if` is to replace horrible `#ifdef` blocks. Consider an application which needs to act in different ways depending on the operating system. Without `if constexpr` you could write the code like this:
@@ -238,7 +235,7 @@ if constexpr (debug_mode) {
 
 ## Caveats
 
-Before we finish, a couple of notes about subtleties of this feature. The use of `constexpr` in `if constexpr` is *not quite* equivalent to `constexpr` functions. `constexpr` functions can be executed at both compile-time *and* run-time, and this choice depends on the context in which they are called.
+Before we finish, a couple of notes about subtleties of this feature. The use of `constexpr` in `if constexpr` is _not quite_ equivalent to `constexpr` functions. `constexpr` functions can be executed at both compile-time _and_ run-time, and this choice depends on the context in which they are called.
 
 ```cpp
 constexpr auto max(int i, int j) {
@@ -248,7 +245,7 @@ constexpr auto max(int i, int j) {
 
 int main() {
     std::array<int, max(4,6)>{}; //max called at compile-time
-    
+
     int i, j;
     std::cin >> i >> j;
     std::cout << max(i,j);       //max called at run-time
@@ -257,7 +254,7 @@ int main() {
 
 In the above code, the first call to `max` is used as a template argument, so is executed at compile-time, whereas the second call cannot be known at compile-time, so is called at run-time.
 
-The condition for an `if constexpr` is *always* executed at compile-time. As such, you can only put constant expressions in the condition.
+The condition for an `if constexpr` is _always_ executed at compile-time. As such, you can only put constant expressions in the condition.
 
 Note also that although any not-taken branches are discarded, they still need to be valid for some instantiation, otherwise the code is ill-formed. For example, you can't write nonsense in a never-taken branch:
 
@@ -274,7 +271,7 @@ void do_something() {
 
 Nor can you put in a `static_assert(false,...)`, just like with normal template specializations[^2]:
 
-[^2]: You can use the usual [`dependent_false`](http://stackoverflow.com/a/25654759/496161) workaround to solve this. 
+[^2]: You can use the usual [`dependent_false`](http://stackoverflow.com/a/25654759/496161) workaround to solve this.
 
 ```cpp
 template <typename T>
@@ -295,7 +292,7 @@ int foo() {
     if (condition())
         return 1;
 
-    // No else block, just an unconditional return    
+    // No else block, just an unconditional return
     return 2;
 }
 ```
@@ -314,8 +311,8 @@ auto get_value(T t) {
 
 The above code will not compile, if `T` is a pointer, because the second return statement will not be discarded, so there will be two return statements which return objects with different types. In such a case, you need to make sure you wrap that last statement in an `else` block.
 
--------
+---
 
 We're done! If you want to try out `constexpr if`, it is currently supported in [Clang 3.9](http://clang.llvm.org/cxx_status.html) and [GCC 7](https://gcc.gnu.org/projects/cxx-status.html). I think that this feature will clean up generic programming significantly and should make anyone decrying the lack of new C++17 features think twice.
 
--------
+---

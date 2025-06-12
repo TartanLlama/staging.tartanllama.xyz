@@ -10,9 +10,9 @@ canonicalURL: https://tartanllama.xyz/posts/writing-a-linux-debugger/elves-and-d
 description: Implementing reading and writing from and to registers and memory
 ---
 
-*This series has been expanded into a book! It covers many more topics in much greater detail, written entirely from scratch. You can buy [Building a Debugger](https://nostarch.com/building-a-debugger) now.*
+_This series has been expanded into a book! It covers many more topics in much greater detail, written entirely from scratch. You can buy [Building a Debugger](https://nostarch.com/building-a-debugger) now._
 
------------------------
+---
 
 ## Series index
 
@@ -27,14 +27,13 @@ description: Implementing reading and writing from and to registers and memory
 9. [Handling Variables](/posts/writing-a-linux-debugger/handling-variables)
 10. [Advanced Topics](/posts/writing-a-linux-debugger/advanced-topics)
 
--------------------------------
+---
 
 Up until now you've heard whispers of dwarves, of debug information, of a way to understand the source code without parsing the thing. Today we'll be going into the details of source-level debug information in preparation for using it in following parts of this tutorial.
 
-
 ## Introduction to ELF and DWARF
 
-ELF and DWARF are two components which you may not have heard of, but probably use most days. ELF (Executable and Linkable Format) is the most widely used object file format in the Linux world; it specifies a way to store all of the different parts of a binary, like the code, static data, debug information, and strings. It also tells the loader how to take the binary and ready it for execution, which involves noting where different parts of the binary should be placed in memory, which bits need to be fixed up depending on the position of other components (*relocations*) and more. I won't cover much more of ELF in these posts, but if you're interested, you can have a look at [this wonderful infographic](https://github.com/corkami/pics/raw/master/binary/elf101/elf101-64.pdf) or [the standard](http://www.skyfree.org/linux/references/ELF_Format.pdf).
+ELF and DWARF are two components which you may not have heard of, but probably use most days. ELF (Executable and Linkable Format) is the most widely used object file format in the Linux world; it specifies a way to store all of the different parts of a binary, like the code, static data, debug information, and strings. It also tells the loader how to take the binary and ready it for execution, which involves noting where different parts of the binary should be placed in memory, which bits need to be fixed up depending on the position of other components (_relocations_) and more. I won't cover much more of ELF in these posts, but if you're interested, you can have a look at [this wonderful infographic](https://github.com/corkami/pics/raw/master/binary/elf101/elf101-64.pdf) or [the standard](http://www.skyfree.org/linux/references/ELF_Format.pdf).
 
 DWARF is the debug information format most commonly used with ELF. It's not necessarily tied to ELF, but the two were developed in tandem and work very well together. This format allows a compiler to tell a debugger how the original source code relates to the binary which is to be executed. This information is split across different ELF sections, each with its own piece of information to relay. Here are the different sections which are defined, taken from this highly informative if slightly out of date [Introduction to the
 DWARF Debugging Format](http://www.dwarfstd.org/doc/Debugging%20using%20DWARF-2012.pdf):
@@ -260,7 +259,6 @@ DW_AT_frame_base            <loclist at offset 0x00000000 with 4 entries follows
 ```
 
 A location list gives different locations depending on where the program counter is. This example says that if the PC is at an offset of `0x0` from `DW_AT_low_pc` then the frame base is an offset of 8 away from the value stored in register 7, if it's between `0x1` and `0x4` away, then it's at an offset of 16 away from the same, and so on.
-
 
 ## Take a Breath
 

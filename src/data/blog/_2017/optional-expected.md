@@ -28,10 +28,15 @@ void foo() {
 There are a myriad of discussions, resources, rants, tirades, debates about the value of exceptions[^1][^2][^3][^4][^5][^6], and I will not repeat them here. Suffice to say that there are cases in which exceptions are not the best tool for the job. For the sake of being uncontroversial, I'll take the example of disappointments which are expected within reasonable use of an API.
 
 [^1]: [Mongrel Monads, Dirty, Dirty, Dirty -- Niall Douglas -- ACCU 2017](https://www.youtube.com/watch?v=XVofgKH-uu4)
+
 [^2]: [Why is exception handling bad? -- Stack Overflow](https://stackoverflow.com/questions/1736146/why-is-exception-handling-bad)
-[^3]: [Are Exceptions in C++ really slow?  -- Stack Overflow](https://stackoverflow.com/questions/13835817/are-exceptions-in-c-really-slow)
+
+[^3]: [Are Exceptions in C++ really slow? -- Stack Overflow](https://stackoverflow.com/questions/13835817/are-exceptions-in-c-really-slow)
+
 [^4]: [C++ Exceptions: The Good, The Bad, And The Ugly -- Shane Kirk](http://www.shanekirk.com/2015/06/c-exceptions-the-good-the-bad-and-the-ugly/)
+
 [^5]: [Top 15 C++ Exception handling mistakes and how to avoid them -- Deb Haldar -- A Coder's Journey](http://www.acodersjourney.com/2016/08/top-15-c-exception-handling-mistakes-avoid/)
+
 [^6]: [Everything wrong with exceptions -- Musing Mortoray](https://mortoray.com/2012/04/02/everything-wrong-with-exceptions/)
 
 The internet loves cats. The hypothetical you and I are involved in the business of producing the cutest images of cats the world has ever seen. We have produced a high-quality C++ library geared towards this sole aim, and we want it to be at the bleeding edge of modern C++.
@@ -43,7 +48,7 @@ A common operation in feline cutification programs is to locate cats in a given 
 image_view find_cat (image_view img);
 ```
 
-This function takes a view of an image and returns a smaller view which contains the first cat it finds. If it does not find a cat, then it throws an exception. If we're going to be giving this function a million images, half of which do not contain cats, then that's a *lot* of exceptions being thrown. In fact, we're pretty much using exceptions for control flow at that point, which is [A Bad Thing](https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#e3-use-exceptions-for-error-handling-only)&trade;.
+This function takes a view of an image and returns a smaller view which contains the first cat it finds. If it does not find a cat, then it throws an exception. If we're going to be giving this function a million images, half of which do not contain cats, then that's a _lot_ of exceptions being thrown. In fact, we're pretty much using exceptions for control flow at that point, which is [A Bad Thing](https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#e3-use-exceptions-for-error-handling-only)&trade;.
 
 What we really want to express is a function which either returns a cat if it finds one, or it returns nothing. Enter `std::optional`.
 
@@ -98,7 +103,7 @@ std::optional<image_view> get_cute_cat (image_view img) {
 Well this is... okay. The user is made to explicitly handle what happens in case of an error, so they can't forget about it, which is good. But there are two issues with this:
 {:.listhead}
 
-1. There's no information about *why* the operations failed.
+1. There's no information about _why_ the operations failed.
 2. There's too much noise; error handling dominates the logic of the code.
 
 I'll address these two points in turn.
@@ -179,7 +184,7 @@ if (opt_widget) {
 }
 ```
 
-If we want to carry out some operation *which could itself fail* then we can use `and_then`:
+If we want to carry out some operation _which could itself fail_ then we can use `and_then`:
 
 ```cpp
 std::optional<widget> maybe_do_thing (const widget&);
@@ -238,12 +243,11 @@ tl::optional<image_view> get_cute_cat (image_view img) {
 
 With these two functions we've successfully pushed the error handling off to the side, allowing us to express a series of operations which may fail without interrupting the flow of logic to test an `optional`. For more discussion about this code and the equivalent exception-based code, I'd recommend reading [Vittorio Romeo](https://twitter.com/supahvee1234)'s [Why choose sum types over exceptions?](https://vittorioromeo.info/index/blog/adts_over_exceptions.html) article.
 
-
 ## A Theoretical Aside
 
 I didn't make up `map` and `and_then` off the top of my head; other languages have had equivalent features for a long time, and the theoretical concepts are common subjects in [Category Theory](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/).
 
-I won't attempt to explain all the relevant concepts in this post, as others have done it far better than I could. The basic idea is that `map` comes from the concept of a *functor*, and `and_then` comes from *monads*. These two functions are called `fmap` and `>>=` (bind) in Haskell. The best description of these concepts which I have read is [Functors, Applicatives' And Monads In Pictures](http://adit.io/posts/2013-04-17-functors,_applicatives,_and_monads_in_pictures.html) by Aditya Bhargava. Give it a read if you'd like to learn more about these ideas.
+I won't attempt to explain all the relevant concepts in this post, as others have done it far better than I could. The basic idea is that `map` comes from the concept of a _functor_, and `and_then` comes from _monads_. These two functions are called `fmap` and `>>=` (bind) in Haskell. The best description of these concepts which I have read is [Functors, Applicatives' And Monads In Pictures](http://adit.io/posts/2013-04-17-functors,_applicatives,_and_monads_in_pictures.html) by Aditya Bhargava. Give it a read if you'd like to learn more about these ideas.
 
 ## A Note on Overload Sets
 
@@ -314,6 +318,6 @@ Maybe I've persuaded you that these extensions to `std::optional` and `std::expe
 
 As far as the standard goes, there are a few avenues being entertained for adding this functionality. I have a [proposal](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2017/p0798r0.html) to extend `std::optional` with new member functions. Vicente Escribá has a [proposal](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2017/p0650r1.pdf) for a generalised monadic interface for C++. Niall Douglas' [`operator try()`](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2017/p0779r0.pdf) paper suggests an analogue to Rust's [try!](https://doc.rust-lang.org/1.9.0/std/macro.try!.html) macro for removing some of the boilerplate associated with this style of programming. It turns out that you can use [coroutines](https://github.com/toby-allsopp/coroutine_monad) for doing this stuff, although my gut feeling puts this more to the "abuse" end of the spectrum. I'd also be interested in evaluating how [Ranges](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2017/n4685.pdf) could be leveraged for these goals.
 
-Ultimately I don't care how we achieve this as a community so long as we have *some* standardised solution available. As C++ programmers we're constantly finding new ways to leverage the power of the language to make expressive libraries, thus improving the quality of the code we write day to day. Let's apply this to `std::optional` and `std::expected`. They deserve it.
+Ultimately I don't care how we achieve this as a community so long as we have _some_ standardised solution available. As C++ programmers we're constantly finding new ways to leverage the power of the language to make expressive libraries, thus improving the quality of the code we write day to day. Let's apply this to `std::optional` and `std::expected`. They deserve it.
 
-------------------
+---

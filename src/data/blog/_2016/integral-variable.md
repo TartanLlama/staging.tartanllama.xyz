@@ -24,7 +24,7 @@ If you feed this code to GCC, it lovingly tells you:
 ```cpp
 error: assignment of read-only variable 'a'
 ```
-    
+
 So, is there any way to get around this? It turns out that there is. I have created `integral_variable`, which has the following usage:
 
 ```cpp
@@ -53,12 +53,11 @@ Since there are some fairly advanced concepts at work here, it might help to rea
 
 Before I get into the gory details, I should note that this work is all based off of [Filip Roséen](http://stackoverflow.com/users/1090079/filip-ros%C3%A9en-refp)'s series of posts about non-constant constant expressions. These posts can be found [here](http://b.atch.se/). Filip goes into a lot of the details about why this is all technically standards-conformant, with all the necessary standardese included in the post. I'll be writing at a higher level and glossing over some of the more complex details, so if you want to know the rest, go read Filip's blog.
 
+---
 
--------------------
 ## Variable Encoding
 
 One of the most important considerations for this class is how we encode the state of a variable. The following encoding may seem a bit overcomplex at first, but for now, all you need to know is that it can be represented at compile-time. You can think of the encoding of `integral_variable` as a punch card. The punch card is a 2D table, where each cell is a location which can be punched out. Each cell starts in the "intact" (0) state, and we can punch it to change to the "punched" (1) state. At a given time, only one column in the table will be active, so there is a cursor to keep track of this column. Here is the starting state for a variable which has a maximum value of two and can be assigned to twice (the first column is just the row numbers for clarity):
-
 
     0 | 1 0 0
     1 | 0 0 0
@@ -100,7 +99,8 @@ Hopefully you now have an idea of how this variable operates and how it might sc
 
 Now that we have a way to encode these variables, we just need to implement this at compile time.
 
-----------------------
+---
+
 ## Constexpr Counter
 
 To implement this in C++ I used a collection of constexpr counters, slightly modified to allow writing of arbitrary values. Each column in the variable encoding is represented by a constexpr counter, the cursor is a constexpr counter, and there is one global one to allow you to generate new variables.
@@ -142,9 +142,9 @@ static constexpr size_type value_reader (int, ident<N>) {
 }
 
 template <size_type N>
-static constexpr size_type 
+static constexpr size_type
 value_reader (float, ident<N>,
-              size_type R = value_reader (0, ident<N-1> ())) 
+              size_type R = value_reader (0, ident<N-1> ()))
 {
   return R;
 }
@@ -166,19 +166,19 @@ Finally, some public helper functions:
 
 ```cpp
 template<size_type Max = 64>
-static constexpr size_type 
+static constexpr size_type
 value (size_type R = value_reader (0, ident<Max> {})) {
   return R;
 }
 
 template<size_type N = 1, class H = meta_counter>
-static constexpr size_type 
+static constexpr size_type
 next (size_type R = writer<ident<N + H::value ()>>::value) {
   return R;
 }
 
 template<size_type N, class H = meta_counter>
-static constexpr size_type 
+static constexpr size_type
 write (size_type R = writer<ident<N + H::value() - H::value()>>::value) {
   return R;
 }
@@ -188,10 +188,11 @@ These do pretty much what you would expect: `value` gets the current value by wa
 
 Now that we've gone over the meta counter, we need to use it to build our variables.
 
---------------------------
+---
+
 ## `integral_variable`
 
-As noted above, an `integral_variable` is a collection of constexpr counters. It mostly operates using static functions, but provides a value wrapper interface for ease of use. 
+As noted above, an `integral_variable` is a collection of constexpr counters. It mostly operates using static functions, but provides a value wrapper interface for ease of use.
 
 The simplest aspect is `make_integral_variable`, which uses a global counter to create new variables:
 
@@ -229,13 +230,13 @@ class integral_variable {
   struct assign_tag_{};
 
   template <class C = atch::meta_counter<var_tag>, size_type R = C::value()>
-  static constexpr auto 
+  static constexpr auto
   assign_tag(assign_tag_<var_tag::value, R> tag = {}) {
     return tag;
   }
 
   template <class C = atch::meta_counter<var_tag>, size_type R = C::next()>
-  static constexpr auto 
+  static constexpr auto
   next_assign_tag(assign_tag_<var_tag::value, R> tag = {}) {
     return tag;
   }
@@ -249,26 +250,26 @@ class integral_variable {
 Finally, a couple of non-static member functions to get and set the variable:
 
 ```cpp
-template <class VarCount = atch::meta_counter<var_tag>, 
+template <class VarCount = atch::meta_counter<var_tag>,
           class Tag = decltype(assign_tag<VarCount>())>
-constexpr size_type 
+constexpr size_type
 get(size_type R = atch::meta_counter<Tag>::template value()) {
   return R;
 }
 
-template <size_type N, class VarCount = atch::meta_counter<var_tag>, 
+template <size_type N, class VarCount = atch::meta_counter<var_tag>,
           class Tag = decltype(next_assign_tag<VarCount>())>
-constexpr size_type 
+constexpr size_type
 set (size_type Written = atch::meta_counter<Tag>::template write<N>()) {
   return Written;
-}    
+}
 ```
 
 As you might imagine, `get` returns the current value of the variable, while `set` sets it.
 
 That covers the code for `integer_variable`.
 
---------------------
+---
 
 Before we finish up, here's a quick interesting facet of this class. Since each generated variable is a new type and the core functionality works through static functions, we get copy semantics similar to `std::reference_wrapper`. For example:
 
@@ -277,17 +278,17 @@ template <typename Var>
 void setVar (Var v) {
   v.set<4>();
 }
-     
+
 int main() {
   auto var = make_integral_variable();
   static_assert(var.get() == 0, "wat");
-     
+
   setVar(var);
   static_assert(var.get() == 4, "wat");
 }
 ```
 
--------------------
+---
 
 So, when should we actually use this in practice?
 
@@ -297,7 +298,7 @@ Really, this is pretty awful. It probably totally breaks across translation unit
 
 If you want to play around with it, you can get the code [here](https://gist.github.com/TartanLlama/3aa4541c12538d1d6cf5cf244cc5d724).
 
-----------------
+---
 
 ## Further Work
 

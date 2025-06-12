@@ -9,7 +9,7 @@ canonicalURL: https://tartanllama.xyz/posts/llvm-alias-analysis
 description: A lightning overview of building a custom compiler alias analysis pass
 ---
 
-At [Codeplay](https://codeplay.com/) I currently work on a compiler backend for an embedded [accelerator](https://en.wikipedia.org/wiki/Hardware_acceleration). The *backend* is the part of the compiler which takes some representation of the source code and translates it to machine code. In my case I'm working with [LLVM](https://llvm.org/), so this representation is [LLVM IR](https://llvm.org/docs/LangRef.html).
+At [Codeplay](https://codeplay.com/) I currently work on a compiler backend for an embedded [accelerator](https://en.wikipedia.org/wiki/Hardware_acceleration). The _backend_ is the part of the compiler which takes some representation of the source code and translates it to machine code. In my case I'm working with [LLVM](https://llvm.org/), so this representation is [LLVM IR](https://llvm.org/docs/LangRef.html).
 
 It's very common for accelerators like GPUs to have multiple regions of addressable memory -- each with distinct properties. One important optimisation I've implemented recently is extending LLVM's alias analysis functionality to handle the different address spaces for our target architecture.
 
@@ -59,7 +59,7 @@ entry:
 }
 ```
 
-However, we have to be very careful, because this optimisation is *only* valid if `a` and `b` do not alias, i.e. they must not point at the same object. Forgetting about the address spaces for a second, consider this call to `foo` where we pass pointers which *do* alias:
+However, we have to be very careful, because this optimisation is _only_ valid if `a` and `b` do not alias, i.e. they must not point at the same object. Forgetting about the address spaces for a second, consider this call to `foo` where we pass pointers which _do_ alias:
 
 ```cpp
 int i = 0;
@@ -68,7 +68,7 @@ int result = foo(&i, &i);
 
 Inside the unoptimised version of `foo`, `i` will be set to `42`, then to `20`, then `20` will be returned. However, if we carry out desired optimisation then the two stores will occur, but `42` will be returned instead of `20`. We've just broken the behaviour of our function.
 
-The only way that a compiler can reasonably carry out the above optimisation is if it can *prove* that the two pointers cannot possibly alias. This reasoning is carried out through *alias analysis*.
+The only way that a compiler can reasonably carry out the above optimisation is if it can _prove_ that the two pointers cannot possibly alias. This reasoning is carried out through _alias analysis_.
 
 ## Custom Alias Analysis in LLVM
 
@@ -114,7 +114,7 @@ void TARPassConfig::addIRPasses() {
     if (auto *WrapperPass = P.getAnalysisIfAvailable<TARAAWrapper>()) {
       AAR.addAAResult(WrapperPass->getResult());
     }
-  }; 
+  };
   addPass(createExternalAAWrapperPass(AnalysisCallback));
   TargetPassConfig::addIRPasses();
 }
@@ -124,7 +124,7 @@ We also want to ensure that there is an optimisation pass which will remove unne
 
 ```cpp
   addPass(createNewGVNPass());
-```  
+```
 
 After all this is done, running the optimiser on the LLVM IR from the start of the post will eliminate the unnecessary load, and the generated code will be faster as a result.
 
@@ -132,4 +132,4 @@ You can see an example with all of the necessary boilerplate in [LLVM's test sui
 
 Hopefully you have got a taste of what alias analysis does and the kinds of work involved in writing compilers, even if I have not gone into a whole lot of detail.
 
-----------
+---

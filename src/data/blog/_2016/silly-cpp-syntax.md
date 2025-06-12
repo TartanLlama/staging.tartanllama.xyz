@@ -42,15 +42,15 @@ void C::B::foo(){
 }
 ```
 
-The first one defines `C::foo`, the second defines `A::foo` and the third defines `B::foo`. This is valid because of an entity known as the *injected-type-name*:
+The first one defines `C::foo`, the second defines `A::foo` and the third defines `B::foo`. This is valid because of an entity known as the _injected-type-name_:
 
 > [[class]/2](https://timsong-cpp.github.io/cppwp/n4140/class#2):
 >
-> A *class-name* is inserted into the scope in which it is declared immediately after the *class-name* is seen. The *class-name* is also inserted into the scope of the class itself; this is known as the *injected-class-name*. For purposes of access checking, the *injected-class-name* is treated as if it were a public member name. [...]
+> A _class-name_ is inserted into the scope in which it is declared immediately after the _class-name_ is seen. The _class-name_ is also inserted into the scope of the class itself; this is known as the _injected-class-name_. For purposes of access checking, the _injected-class-name_ is treated as if it were a public member name. [...]
 
 Since `A` is a base class of `C` and the name `A` is injected into the scope of `A`, `A` is also visible from `C`.
 
-The *injected-class-name* exists to ensure that the class is found during name lookup instead of entities in an enclosing scope. It also makes referring to the class name in a template instantiation easier. But since we're awful people, we can use this perfectly reasonable feature do horribly perverse things like this:
+The _injected-class-name_ exists to ensure that the class is found during name lookup instead of entities in an enclosing scope. It also makes referring to the class name in a template instantiation easier. But since we're awful people, we can use this perfectly reasonable feature do horribly perverse things like this:
 
 ```cpp
 void C::C::C::A::A::A::foo(){

@@ -8,9 +8,10 @@ tags:
 canonicalURL: https://tartanllama.xyz/posts/stack-vs-heap
 description: Why many uses of these terms are inaccurate and confusing, and what you should use instead
 ---
+
 The terms "stack" and "heap" are often used in C++ writings inaccurately and unnecessarily. This article will show why the usage is incorrect and what terms should be used instead.
 
------------
+---
 
 Have a look at the following code sample and have a think about where the `int`s are stored. Write down the answers if you feel like it.
 
@@ -80,7 +81,7 @@ main:
         .cfi_endproc
 ```
 
-`*e` is stored on the *free store*, which is where `new` allocates from. This is the "official" name for what is often referred to as the "heap"; some think that using it is just pendantry, but I wish more would use it, as the term "heap" is unhelpfully overloaded in programming. The argument for the `c` parameter is stored in the `edi` register.
+`*e` is stored on the _free store_, which is where `new` allocates from. This is the "official" name for what is often referred to as the "heap"; some think that using it is just pendantry, but I wish more would use it, as the term "heap" is unhelpfully overloaded in programming. The argument for the `c` parameter is stored in the `edi` register.
 
 Here's the definition for `foo`:
 
@@ -162,9 +163,9 @@ So for this example, the answers are:
 
 What if we used a different operating system? Or a different compiler? The answers could be completely different again.
 
-It should be obvious now that regardless of how a variable is declared and initialized in C++, you can't determine how it will be stored in the general case. `d` could be allocated on the stack, or stored in a register, or optimised out, or put in some other uncommon architecture-specific area. Sometimes you might not even *have* a heap (some embedded environments, for example).
+It should be obvious now that regardless of how a variable is declared and initialized in C++, you can't determine how it will be stored in the general case. `d` could be allocated on the stack, or stored in a register, or optimised out, or put in some other uncommon architecture-specific area. Sometimes you might not even _have_ a heap (some embedded environments, for example).
 
----------------
+---
 
 So what does the C++ standard have to say about stacks and heaps and suchlike?
 
@@ -172,17 +173,17 @@ So what does the C++ standard have to say about stacks and heaps and suchlike?
 
 The standard says nothing about how or where things are stored. The words "stack" and "heap" are used at various points, but only in reference to things like stack unwinding, `std::stack`, and heap data structure operations (`std::make_heap` and friends).
 
-In that case what *does* the standard say?
+In that case what _does_ the standard say?
 
--------------
+---
 
 C++, like any programming language, is built on abstractions. The specification defines an abstract machine which implementations are to emulate, and so long as an implementation executes a well-formed program with the same observable behaviour as a possible abstract machine execution, it's free to model the machine however it wishes. Storage is another area in which the standard uses an abstraction to avoid peppering architecture-specific terms across the document.
 
-**The standard does not define storage *location*. It defines storage *duration*.**
+**The standard does not define storage _location_. It defines storage _duration_.**
 
 > [[basic.stc]/1](https://timsong-cpp.github.io/cppwp/n4861/basic.stc#1):
 >
->Storage duration is the property of an object that defines the minimum potential lifetime of the storage containing the object. The storage duration is determined by the construct used to create the object and is one of the following:
+> Storage duration is the property of an object that defines the minimum potential lifetime of the storage containing the object. The storage duration is determined by the construct used to create the object and is one of the following:
 >
 > - static storage duration
 > - thread storage duration
@@ -215,7 +216,7 @@ thread_local int a;
 thread_local int b = 42;
 
 void foo() {
-    static thread_local int c;                     
+    static thread_local int c;
 }
 
 struct Bar {
@@ -225,8 +226,8 @@ struct Bar {
 
 `a`, `b`, `c` and `d` have thread storage duration. The storage for them will last for the duration of the thread in which they are created. Note that `static` must be specified for thread local class members. Thread storage duration is a C++11 feature.
 
-
 ## Automatic storage duration
+
 ```cpp
 void foo(int a) {
     int b;
@@ -234,9 +235,10 @@ void foo(int a) {
 }
 ```
 
-`a`, `b` and `c`  have automatic storage duration. The storage for them will last until the block in which they are created exits. `register` gives a hint to allocate the variable in a register, but it's deprecated since C++11 and removed in C++17.
+`a`, `b` and `c` have automatic storage duration. The storage for them will last until the block in which they are created exits. `register` gives a hint to allocate the variable in a register, but it's deprecated since C++11 and removed in C++17.
 
 ## Dynamic storage duration
+
 ```cpp
 int* a = new int{};
 
@@ -247,8 +249,7 @@ void foo() {
 
 `*a` and `*b` have dynamic storage duration. The storage for them will last until it is reclaimed using `delete`.
 
-
--------------
+---
 
 Now that we have a common, accurate language with which to talk about these concepts, we can rephrase my original question and give the correct answer to it.
 
@@ -276,11 +277,10 @@ The answers:
     d -> automatic
     *e -> dynamic
 
--------------
+---
 
-Is all of this just needless pedantry? I don't believe so. As programmers we all know the value of abstraction, precicion, clarity, unambiguity. Using these terms is in aid of these goals, and is particularly helpful for those learning the language. 
+Is all of this just needless pedantry? I don't believe so. As programmers we all know the value of abstraction, precicion, clarity, unambiguity. Using these terms is in aid of these goals, and is particularly helpful for those learning the language.
 
 My final question is this: when should we refer to the storage duration and when should we refer to the storage location? I would advise the following:
 
 **Only refer to the storage location if you need to discuss where a variable is physically located. In all other cases, refer to the storage duration.**
-

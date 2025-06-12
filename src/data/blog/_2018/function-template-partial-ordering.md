@@ -10,7 +10,6 @@ canonicalURL: https://tartanllama.xyz/posts/function-template-partial-ordering
 description: For deconfounding complex template rules
 ---
 
-
 C++ function overloading rules are complex. C++ template rules are complex. Put the two together, and you unfortunately do not get something simple; you get a hideous monster of standardese which requires great patience and knowledge to overcome. However, since C++ is mostly corner-cases, it can pay to understand how the rules apply for those times where you just can't work out why your code won't compile. This post will present a few step-by-step examples of how partial ordering of function templates works in order to arm you for these times of need.
 
 Partial ordering of function templates is a step of overload resolution. It occurs when you call a function template which is overloaded and the compiler needs to decide which one is more specialized than the other. Consider this code:
@@ -77,9 +76,9 @@ type_0 const* arg = nullptr;
 func_1(arg);
 ```
 
-[This succeeds](https://godbolt.org/g/dFKVVs) because a `type_0 const*` can be used to deduce `T`. Since deduction from `(1)` to `(2)` fails, but deduction from `(2)` to `(1)` succeeds, `(2)` is *more specialized* than `(1)` and will be chosen by overload resolution.
+[This succeeds](https://godbolt.org/g/dFKVVs) because a `type_0 const*` can be used to deduce `T`. Since deduction from `(1)` to `(2)` fails, but deduction from `(2)` to `(1)` succeeds, `(2)` is _more specialized_ than `(1)` and will be chosen by overload resolution.
 
---------------------
+---
 
 Let's try a different example. How about:
 
@@ -125,7 +124,7 @@ Since deduction succeeded in both directions, the call is ambiguous. Sure enough
 
 This is why the algorithm is a _partial_ ordering: sometimes two function templates are not ordered.
 
---------------------------------
+---
 
 I'll give one more example. This one has multiple parameters and is a bit more subtle.
 
@@ -160,10 +159,10 @@ This [fails](https://godbolt.org/g/1wjy85) because `typename identity<T>::type` 
 
 In the example from the last section deduction succeeded both ways so the call was ambiguous. In this example, deduction _fails_ both ways, which is also [an ambiguous call](https://godbolt.org/g/V3o7p6).
 
---------------------------
+---
 
 That's the last of the examples. Of course, there are a bunch of rules which I didn't cover here, like Concepts, parameter packs, non-type/template template parameters, and cases where both the argument and parameter types are references. Hopefully you now have enough of an intuition that you can understand what the standard says when you inevitably hit those corner cases.
 
---------------------------
+---
 
 [^1]: I'll ignore non-type template parameters and template template parameters for simplicity, but the rules are essentially the same.

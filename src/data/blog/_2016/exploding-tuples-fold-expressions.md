@@ -21,7 +21,7 @@ for_each(std::make_tuple(1, 42.1, "hi"),
          [](auto&& e) { std::cout << e; });
 ```
 
-The implementation of `for_each` would typically rely on the *indices trick*. This involves generating a compile-time sequence of indices for the tuple, then passing them as variadic non-type template arguments to another template function and expanding the resulting parameter pack. If that all sounds gibberish to you, don't worry, I'll explain.
+The implementation of `for_each` would typically rely on the _indices trick_. This involves generating a compile-time sequence of indices for the tuple, then passing them as variadic non-type template arguments to another template function and expanding the resulting parameter pack. If that all sounds gibberish to you, don't worry, I'll explain.
 
 ```cpp
 template <typename... Args, typename Func>
@@ -60,16 +60,16 @@ then `std::index_sequence<0,1,2>` will be generated in `for_each`, everything wi
 
 Unfortunately, that's not what happens.
 
-----------------------------------
+---
 
 ## Everything is Awful
 
-Keen readers might have noticed that I lied in the above section. `f(std::get<Idx>(t))...;` does *not* generate that sequence of calls to `f`. In fact, it doesn't even compile. The problem is that parameter packs can only be expanded in contexts which expect a syntactic list, such as initializers and function call arguments. You can't just expand them bare in a function body. In C++17, this problem has a nice solution, but prior to that we need to use some pretty horrible hacks. Here's one possibility which uses `std::initializer_list` to create a context in which the parameter pack can be expanded.
+Keen readers might have noticed that I lied in the above section. `f(std::get<Idx>(t))...;` does _not_ generate that sequence of calls to `f`. In fact, it doesn't even compile. The problem is that parameter packs can only be expanded in contexts which expect a syntactic list, such as initializers and function call arguments. You can't just expand them bare in a function body. In C++17, this problem has a nice solution, but prior to that we need to use some pretty horrible hacks. Here's one possibility which uses `std::initializer_list` to create a context in which the parameter pack can be expanded.
 
 ```cpp
 template <typename... Args, typename Func, std::size_t... Idx>
 void for_each(const std::tuple& t, Func&& f, std::index_sequence<Idx...>) {
-    (void)std::initializer_list<int> { 
+    (void)std::initializer_list<int> {
         (f(std::get<Idx>(t)), void(), 0)...
     };
 }
@@ -77,7 +77,7 @@ void for_each(const std::tuple& t, Func&& f, std::index_sequence<Idx...>) {
 
 The above successfully [compiles and runs](http://coliru.stacked-crooked.com/a/32f5cd5194fef6c6). The trick is the `, 0` inside the `initializer_list` initializer, which evaluates the function call, and uses `0` as the initializer value. The `void()` is there just incase some has been perverse enough to call this with types with overloaded `operator,`.
 
---------------------------
+---
 
 ## Fold Expressions are Less Awful
 
@@ -92,7 +92,7 @@ void for_each(const std::tuple<Args...>& t, Func&& f, std::index_sequence<Idx...
 
 I think you'll agree that this is a huge improvement.
 
--------------------
+---
 
 ## Abstracting It
 
@@ -108,7 +108,7 @@ auto make_index_dispatcher(std::index_sequence<Idx...>) {
 
 template <std::size_t N>
 auto make_index_dispatcher() {
-    return make_index_dispatcher(std::make_index_sequence<N>{}); 
+    return make_index_dispatcher(std::make_index_sequence<N>{});
 }
 ```
 
@@ -135,8 +135,8 @@ void for_each(Tuple&& t, Func&& f) {
 }
 ```
 
---------------------
+---
 
 There you have it; a generic utility for compile-time dispatching on index-based containers, and the know-how to implement variations yourself. Let me know if you find any uses or improvements for this, or if you have any questions about the nitty-gritty of these techniques.
 
---------------------
+---

@@ -32,7 +32,6 @@ std::transform(first, last, target, foo<int>); //bad
 std::transform(first, last, target, foo{});    //okay I guess
 ```
 
-
 A simple first choice would be to make it a function template:
 
 ```cpp
@@ -44,7 +43,7 @@ This fulfils the first requirement, but not the second:
 
 ```cpp
 //compiles, but not what we want
-std::transform(first, last, target, foo<int>); 
+std::transform(first, last, target, foo<int>);
 
 //uh oh
 std::transform(first, last, target, foo);
@@ -80,7 +79,7 @@ std::transform(first, last, target, foo{});
 
 //this looks strange
 auto x = foo{}(42.0);
-auto x = foo()(42.0);      
+auto x = foo()(42.0);
 ```
 
 We have similar problems when we have multiple overloads, even when we're not using templates:
@@ -91,9 +90,8 @@ float foo (float);
 
 std::transform(first, last, target, foo); //doesn't compile
 // ew ew ew ew ew ew ew
-std::transform(first, last, target, static_cast<int(*)(int)>(foo)); 
+std::transform(first, last, target, static_cast<int(*)(int)>(foo));
 ```
-
 
 We're going to need a different solution.
 
@@ -163,8 +161,7 @@ Now our higher-order function call becomes:
 std::transform(first, last, target, LIFT(foo));
 ```
 
-Okay, so there's a macro in there, but it's not *too* bad (you know we're in trouble when I start trying to justify the use of macros for this kind of thing). So `LIFT` is at least some solution.
-
+Okay, so there's a macro in there, but it's not _too_ bad (you know we're in trouble when I start trying to justify the use of macros for this kind of thing). So `LIFT` is at least some solution.
 
 ## Making Function Objects Work for Us
 
@@ -178,7 +175,7 @@ struct foo_impl {
 
    //overloads
    int operator()(int) { /*...*/ }
-   float operator()(float) { /*...*/ }   
+   float operator()(float) { /*...*/ }
 };
 
 extern const foo_impl foo;
@@ -270,20 +267,22 @@ namespace lift {
 
 Now we can use `lift::foo` instead of `lib::foo` and it'll fit the requirements I laid out at the start of the post. Unfortunately, I think it's possible to hit ODR-violations with this due to possible difference in closure types cross-TU. I'm not sure what the best workaround for this is, so input is appreciated.
 
-
 ## Conclusion
 
 I've given you a few solutions to the problem I showed at the start, so what's my conclusion? C++ still has a way to go to support this paradigm of programming, and teaching these ideas is a nightmare. If a beginner or even intermediate programmer asks how to pass overloaded functions around -- something which sounds like it should be fairly easy -- it's a real shame that the best answers I can come up with are "Copy this macro which you have no chance of understanding", or "Make function objects, but make sure you do it this way for reasons which I can't explain unless you understand the subtleties of ODR[^4]". I feel like the language could be doing more to support these use cases.
 
 Maybe for some people "Do it this way and don't ask why" is an okay answer, but that's not very satisfactory to me. Maybe I lack imagination and there's a better way to do this with what's already available in the language.
 
----------------
+---
 
 [^1]: [P0315: Lambdas in unevaluated contexts](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2017/p0315r2.pdf)
+
 [^2]: [P0624: Default constructible and assignable stateless lambdas](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2017/p0624r2.pdf)
+
 [^3]: Example lovingly stolen from [n4381](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2015/n4381.html).
+
 [^4]: Disclaimer: I don't understand all the subtleties of ODR.
 
 Thanks to Michael Maier for the motivation to write this post; Jayesh Badwaik, Ben Craig, Michał Dominiak and Kévin Boissonneault for discussion on ODR violations; and Eric Niebler, Barry Revzin, Louis Dionne, and Michał Dominiak (again) for their work on the libraries and standards papers I referenced.
 
-------------------
+---

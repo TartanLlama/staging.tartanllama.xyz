@@ -56,14 +56,13 @@ The `~interface() noexcept { }` defines a destructor for instances of the metacl
 
 But enough of stealing examples from the paper. I've been interested in metaclasses since seeing Herb talk about them at ACCU 2017, and since then I've always been looking for places where they could make C++ programming safer, more elegant, more maintainable. In this post I'll talk about how they can aid creation of embedded domain specific languages.
 
-
 ## Embedded What?
 
 Before I get into the meat of what I want to discuss, I have some terms to define.
 
-A *domain specific language* (DSL) is a language which is specifically designed for some problem area. C++ is a general-purpose language because it can be used for solving any kind of programming problem. SQL is a domain-specific language because it is designed only for reading and manipulating databases.
+A _domain specific language_ (DSL) is a language which is specifically designed for some problem area. C++ is a general-purpose language because it can be used for solving any kind of programming problem. SQL is a domain-specific language because it is designed only for reading and manipulating databases.
 
-An *embedded* DSL (EDSL) is a domain specific language hosted inside a more general language. For example, [Boost.Spirit](http://boost-spirit.com/home/) is a parser library which embeds a language for parsing code into C++ by using expression templates and operator overloading.
+An _embedded_ DSL (EDSL) is a domain specific language hosted inside a more general language. For example, [Boost.Spirit](http://boost-spirit.com/home/) is a parser library which embeds a language for parsing code into C++ by using expression templates and operator overloading.
 
 ## My Case Study
 
@@ -146,12 +145,12 @@ Code to generate firmware from the high-level descriptions can now also be place
 ```cpp
 $class keyboard {
     //validations as above
-    
+
     template <class Layouts>
     static pressed_keys scan_matrix() {
         //...
     }
-    
+
     static void run_firmware() {
         while (true) {
             auto pressed_keys = scan_matrix<keyboard::layouts>();
@@ -163,8 +162,8 @@ $class keyboard {
 
 The above also somewhat addresses problem of cohesion and code locality. In my C++17 ETKF implementation, the validations which are run over the keyboard descriptions are quite separate from the code which generates the firmware from the template declarations. But really, these are both part of the abstraction which I'm trying to express in the interface. Metaclasses provide a means to tie together the constraints on the declaration as well as the code which lowers the EDSL into normal C++ land.
 
----------------------
+---
 
 That's it for my contribution to the metaclass hype train. Maybe I'll write some more posts as I come up with more ideas, but I'm particularly interested in exploring the design space for declarative EDSLs in C++. Templates are a powerful host for other languages, and metaclasses only make them more so.
 
----------------------
+---

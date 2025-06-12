@@ -10,9 +10,9 @@ canonicalURL: https://tartanllama.xyz/posts/writing-a-linux-debugger/handling-va
 description: Adding support reading variables to the debugger
 ---
 
-*This series has been expanded into a book! It covers many more topics in much greater detail, written entirely from scratch. You can buy [Building a Debugger](https://nostarch.com/building-a-debugger) now.*
+_This series has been expanded into a book! It covers many more topics in much greater detail, written entirely from scratch. You can buy [Building a Debugger](https://nostarch.com/building-a-debugger) now._
 
------------------------
+---
 
 ## Series index
 
@@ -27,7 +27,7 @@ description: Adding support reading variables to the debugger
 9. [Handling Variables](/posts/writing-a-linux-debugger/handling-variables)
 10. [Advanced Topics](/posts/writing-a-linux-debugger/advanced-topics)
 
--------------------------------
+---
 
 Variables are sneaky. At one moment they'll be happily sitting in registers, but as soon as you turn your head they're spilled to the stack. Maybe the compiler completely throws them out of the window for the sake of optimization. Regardless of how often variables move around in memory, we need some way to track and manipulate them in our debugger. This post will teach you more about handling variables in your debugger and demonstrate a simplified implementation using `libelfin`.
 
@@ -175,7 +175,6 @@ Each member has a name, a type (which is a DIE offset), a declaration file and l
 
 As you can see, `int` on my laptop is a 4-byte signed integer type, and `float` is a 4-byte float. The integer array type is defined by pointing to the `int` type as its element type, a `sizetype` (think `size_t`) as the index type, with `2a` elements. The `test*` type is a `DW_TAG_pointer_type` which references the `test` DIE.
 
-
 ## Implementing a Simple Variable Reader
 
 As mentioned, `libelfin` will deal with most of the complexity for us. However, it doesn't implement all of the different methods for representing variable locations, and handling a lot of them in our code would get pretty complex. As such, I've chosen to only support `exprloc`s for now. Feel free to add support for more types of expression. If you're really feeling brave, submit some patches to `libelfin` to help complete the necessary support!
@@ -252,7 +251,7 @@ Now that we've evaluated the expression, we need to read the contents of the var
                 case expr_result::type::address:
                 {
                     auto value = read_memory(result.value);
-                    std::cout << at_name(die) << " (0x" << std::hex << result.value << ") = " 
+                    std::cout << at_name(die) << " (0x" << std::hex << result.value << ") = "
                               << value << std::endl;
                 }
 
@@ -283,7 +282,7 @@ Finally we can add this to our command parser:
 
 Write a few small functions which have some variables, compile it without optimizations and with debug info, then see if you can read the values of your variables. Try writing to the memory address where a variable is stored and see the behaviour of the program change.
 
--------------------
+---
 
 Nine posts down, one to go! Next time I'll be talking about some more advanced concepts which might interest you. For now you can find the code for this post [here](https://github.com/TartanLlama/minidbg/tree/tut_variable)
 

@@ -31,7 +31,7 @@ export const SOCIALS: Social[] = [
     linkTitle: `${SITE.title} on Bluesky`,
     icon: IconBluesky,
   },
-    {
+  {
     name: "Mastodon",
     href: "https://mastodon.social/@TartanLlama",
     linkTitle: `${SITE.title} on Mastodon`,

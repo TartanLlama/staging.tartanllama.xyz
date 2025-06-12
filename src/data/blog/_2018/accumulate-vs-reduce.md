@@ -129,7 +129,6 @@ For more information on iterator types and parallel algorithms, see [p0467r2](ht
 
 That covers the differences between `std::reduce` and `std::accumulate`. My three point guide to `std::reduce` is:
 
-
 - Use `std::reduce` when you want your accumulation to run in parallel
 - Ensure that the operation you want to use is both associative and commutative
 - Remember that the default initial value is produced by default construction, and that this may not be correct for your operation
@@ -140,6 +139,6 @@ Now you know how and when to use `std::reduce` over `std::accumulate`. More gene
 
 Thanks to Christopher Di Bella for reviewing this post and linking me to p0467r2. Thanks to Ben Steffan, Ben Deane, and TemplateRex for discussion about commutativity.
 
------------
+---
 
 [^1]: For more about axioms and algorithms, see [this post](http://cjdb.com.au/blog/2018/05/15/prepping-yourself-to-conceptify-algorithms) by [Christopher Di Bella](https://twitter.com/cjdb_ns).

@@ -10,9 +10,9 @@ canonicalURL: https://tartanllama.xyz/posts/writing-a-linux-debugger/source-leve
 description: Adding support for setting breakpoints on lines of source code and functions
 ---
 
-*This series has been expanded into a book! It covers many more topics in much greater detail, written entirely from scratch. You can buy [Building a Debugger](https://nostarch.com/building-a-debugger) now.*
+_This series has been expanded into a book! It covers many more topics in much greater detail, written entirely from scratch. You can buy [Building a Debugger](https://nostarch.com/building-a-debugger) now._
 
------------------------
+---
 
 ## Series index
 
@@ -27,12 +27,11 @@ description: Adding support for setting breakpoints on lines of source code and 
 9. [Handling Variables](/posts/writing-a-linux-debugger/handling-variables)
 10. [Advanced Topics](/posts/writing-a-linux-debugger/advanced-topics)
 
--------------------------------
+---
 
 Setting breakpoints on memory addresses is all well and good, but it doesn't provide the most user-friendly tool. We'd like to be able to set breakpoints on source lines and function entry addresses as well, so that we can debug at the same abstraction level as our code.
 
 This post will add source-level breakpoints to our debugger. With all of the support we already have available to us, this is a lot easier than it may first sound. We'll also add a command to get the type and address of a symbol, which can be useful for locating code or data and understanding linking concepts.
-
 
 ## Breakpoints
 
@@ -117,6 +116,7 @@ IS=val ISA number, DI=val discriminator value
 0x004004ed  [   7, 0] NS
 0x004004f4  [   7, 0] NS ET
 ```
+
 So if we want to set a breakpoint on line 5 of `ab.cpp`, we look up the entry which corresponds to that line (`0x004004e3`) and set a breakpoint there.
 
 ```cpp
@@ -137,7 +137,6 @@ void debugger::set_breakpoint_at_source_line(const std::string& file, unsigned l
 ```
 
 My `is_suffix` hack is there so you can type `c.cpp` for `a/b/c.cpp`. Of course you should actually use a sensible path handling library or something; I'm lazy. The `entry.is_stmt` is checking that the line table entry is marked as the beginning of a statement, which is set by the compiler on the address it thinks is the best target for a breakpoint.
-
 
 ## Symbol Lookup
 
@@ -318,14 +317,13 @@ else if(is_prefix(command, "symbol")) {
 }
 ```
 
-
 ## Testing
 
 Fire up your debugger on a simple binary, play around with setting source-level breakpoints. Setting a breakpoint on some `foo` and seeing my debugger stop on it was one of the most rewarding moments of this project for me.
 
 Symbol lookup can be tested by adding some functions or global variables to your program and looking up the names of them. Note that if you're compiling C++ code you'll need to take [name mangling](https://en.wikipedia.org/wiki/Name_mangling#C.2B.2B) into account as well.
 
-----------------
+---
 
 That's all for this post. Next time I'll show how to add stack unwinding support to the debugger.
 

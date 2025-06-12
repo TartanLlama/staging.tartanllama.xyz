@@ -10,10 +10,9 @@ canonicalURL: https://tartanllama.xyz/posts/writing-a-linux-debugger/registers-a
 description: Implementing reading and writing from and to registers and memory
 ---
 
-*This series has been expanded into a book! It covers many more topics in much greater detail, written entirely from scratch. You can buy [Building a Debugger](https://nostarch.com/building-a-debugger) now.*
+_This series has been expanded into a book! It covers many more topics in much greater detail, written entirely from scratch. You can buy [Building a Debugger](https://nostarch.com/building-a-debugger) now._
 
------------------------
-
+---
 
 ## Series index
 
@@ -28,7 +27,7 @@ description: Implementing reading and writing from and to registers and memory
 9. [Handling Variables](/posts/writing-a-linux-debugger/handling-variables)
 10. [Advanced Topics](/posts/writing-a-linux-debugger/advanced-topics)
 
--------------------------------
+---
 
 In the last post we added simple address breakpoints to our debugger. This time we'll be adding the ability to read and write registers and memory, which will allow us to screw around with our program counter, observe state and change the behaviour of our program.
 
@@ -175,8 +174,6 @@ As you can see, iostreams has a very concise interface for outputting hex data n
 
 This gives us enough support to handle registers easily in the rest of the debugger, so we can now add this to our UI.
 
-
-
 ## Exposing Our Registers
 
 All we need to do here is add a new command to the `handle_command` function. With the following code, users will be able to type `register read rax`, `register write rax 0x42` and so on.
@@ -279,7 +276,6 @@ void debugger::wait_for_signal() {
 }
 ```
 
-
 Finally we rewrite `continue_execution` like this:
 
 ```cpp
@@ -289,7 +285,6 @@ void debugger::continue_execution() {
     wait_for_signal();
 }
 ```
-
 
 ## Testing
 
@@ -310,7 +305,7 @@ Now that we can read and modify registers, we can have a bit of fun with our hel
 
 You'll want to move the program counter back to `0x1191` offset from the base address so that the `rsi` and `rdi` registers are set up properly.
 
--------------------
+---
 
 In the next post, we'll take our first look at DWARF information and add various kinds of single stepping to our debugger. After that, we'll have a mostly functioning tool which can step through code, set breakpoints wherever we like, modify data and so forth. As always, drop a comment below if you have any questions!
 
@@ -318,4 +313,4 @@ You can find the code for this post [here](https://github.com/TartanLlama/minidb
 
 [Next post](/posts/writing-a-linux-debugger/elves-and-dwarves)
 
--------------------------------
+---

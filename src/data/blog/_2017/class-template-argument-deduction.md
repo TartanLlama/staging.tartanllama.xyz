@@ -41,9 +41,9 @@ pair a{0, 42.42};
 std::tuple t{"hi", 15, std::vector<int>{}};
 ```
 
-This feature is supported through a new concept known as *deduction guides*, which tell the compiler how to deduce template arguments for the template class from the constructor arguments. These can be implicitly synthesized, or explicitly specified.
+This feature is supported through a new concept known as _deduction guides_, which tell the compiler how to deduce template arguments for the template class from the constructor arguments. These can be implicitly synthesized, or explicitly specified.
 
------------------
+---
 
 ## Implicitly Synthesized Deduction Guides
 
@@ -74,7 +74,7 @@ pair c = std::move(b);
 
 If your class doesn't fulfil the criteria for implicit deduction guides and you still want to deduce the class template arguments automatically, you can give your compiler a bit of help.
 
------------------
+---
 
 ## Explicitly Specified Deduction Guides
 
@@ -86,10 +86,10 @@ Say we have a simple `vector` class and want to construct a `vector` from the fi
 template <typename T>
 struct vector {
     vector (std::initializer_list<T> a);
-    
+
     template <typename Iter>
     vector (Iter start, Iter end);
-    
+
     T* begin();
     T* end();
 };
@@ -102,13 +102,13 @@ vector b(it, it+3);        // Implicit guide will not work
 Looking back at my rule of thumb from before, the second constructor cannot deduce `T`, so we need to provide an explicit deduction guide. This looks like the following:
 
 ```cpp
-template<typename Iter> 
+template<typename Iter>
 vector(Iter b, Iter e) -> vector<typename std::iterator_traits<Iter>::value_type>;
 ```
 
 The above deduction guide says that the constructor for `vector` taking two `Iter`s deduces the template argument to be `typename std::iterator_traits<Iter>::value_type`. For `int*`, that's just `int`. When the compiler sees `vector b(it, it+3);`, it instantiates the deduction guide with `int*` as the template argument, and deduces `vector<int>` as the type of `b`.
 
-----------------
+---
 
 Does this mean that `make_` functions are useless? No.
 
@@ -116,8 +116,8 @@ Although this feature removes most of the need for these helpers, there are stil
 
 Use template deduction for template classes in most cases, but be aware of edge cases and the few places in which `make_` helpers are the better choice.
 
----------------
+---
 
 That covers the basics of template argument deduction for class template constructors. If you want to read more, you can have a look at the [proposal for this feature](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2016/p0091r3.html). I think this is a welcome addition to C++ which removes another of the myriad pitfalls and inconsistencies in the language.
 
-----------------
+---

@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch:
 
 jobs:
@@ -41,7 +41,7 @@ jobs:
 
       - name: "🚀 Build the project"
         run: pnpm run build
-        
+
   deploy:
     needs: build
     runs-on: ubuntu-latest

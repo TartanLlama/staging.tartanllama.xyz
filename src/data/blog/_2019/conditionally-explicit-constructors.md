@@ -55,7 +55,7 @@ template<class T>
 struct wrapper {
   template<class U, std::enable_if_t<std::is_convertible_v<U, T>>* = nullptr>
   wrapper(U const& u) : t_(u) {}
-  
+
   template<class U, std::enable_if_t<!std::is_convertible_v<U, T>>* = nullptr>
   explicit wrapper(U const& u) : t_(u) {}
 
@@ -66,20 +66,22 @@ struct wrapper {
 This gives our type the desired behavior. However, it’s not very satisfactory: we now need two overloads for what should really be one and we’re using SFINAE to choose between them, which means we take hits on compile-time and code clarity.`explicit(bool)` solves both problems by allowing you to lift the convertibility condition into the `explicit` specifier:
 
 ```cpp
-template<class T> 
-struct wrapper { 
-  template<class U> 
-  explicit(!std::is_convertible_v<U, T>) 
-  wrapper(U const& u) : t_(u) {} 
+template<class T>
+struct wrapper {
+  template<class U>
+  explicit(!std::is_convertible_v<U, T>)
+  wrapper(U const& u) : t_(u) {}
 
-  T t_; 
+  T t_;
 };
 ```
 
 Next time you need to make something conditionally `explicit`, use `explicit(bool)` for simpler code, faster compile times[^3], and less code repetition.
 
----------
+---
 
 [^1]: I know, implicit conversions are evil. There are some places where they make a big improvement to ergonomics though and leaving choices to users makes our generic types more widely applicable.
+
 [^2]: `std::forward` and such omitted for brevity.
+
 [^3]: I tested 500 template instantiations with Visual Studio 2019 version 16.2 and using `explicit(bool)` sped up the frontend by ~15%

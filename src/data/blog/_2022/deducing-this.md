@@ -102,7 +102,7 @@ This does the same thing as the above four overloads, but in a single function. 
 
 So we wrote a version of what eventually got standardised, soon discovered that Gašper and Ben were working on a different paper for the exact same feature, we joined forces, and here we all are several years later.
 
-## Design 
+## Design
 
 The key design principle we followed was that it should do what you expect. To achieve this, we touched as few places in the standard as we possibly could. Notably, we didn’t touch overload resolution rules or template deduction rules, and name resolution was only changed a little bit (as a treat).
 
@@ -270,6 +270,7 @@ auto callback = [m=get_message(), &scheduler](this auto &&self) -> bool {
 Now our original use case works, and the captured object will be copied or moved depending on how we use the closure.
 
 ### Recursive lambdas
+
 Since we now have the ability to name the closure object in a lambda’s parameter list, this allows us to do recursive lambdas! As above:
 
 ```cpp
@@ -295,9 +296,9 @@ We can count the number of leaves like so:
 ```cppp
 int num_leaves(Tree const& tree) {
     return std::visit(overload( //see below
-        [](Leaf const&) { return 1; },                       
-        [](this auto const& self, Node* n) -> int {              
-            return std::visit(self, n->left) + std::visit(self, n->right); 
+        [](Leaf const&) { return 1; },
+        [](this auto const& self, Node* n) -> int {
+            return std::visit(self, n->left) + std::visit(self, n->right);
         }
     ), tree);
 }
@@ -328,11 +329,11 @@ int main() {
 MSVC generates the following assembly:
 
 ```asm
-sub     rsp, 40                           
+sub     rsp, 40
 lea     rcx, QWORD PTR tiny_tim$[rsp]
-mov     DWORD PTR tiny_tim$[rsp], 42     
-call    int just_a_little_guy::uwu(void)  
-add     rsp, 40                            
+mov     DWORD PTR tiny_tim$[rsp], 42
+call    int just_a_little_guy::uwu(void)
+add     rsp, 40
 ret     0
 ```
 
@@ -356,8 +357,8 @@ struct just_a_little_guy {
 In that case, the following code is generated:
 
 ```cpp
-mov     ecx, 42                           
-jmp     static int just_a_little_guy::uwu(this just_a_little_guy) 
+mov     ecx, 42
+jmp     static int just_a_little_guy::uwu(this just_a_little_guy)
 ```
 
 We just move `42` into the relevant register and jump (`jmp`) to the `uwu` function. Since we’re not passing by reference we don’t need to allocate anything on the stack. Since we’re not allocating on the stack we don’t need to de-allocate at the end of the function. Since we don’t need to deallocate at the end of the function we can just jump straight to `uwu` rather than jumping there and then back into this function when it returns, using call.
@@ -410,7 +411,7 @@ struct optional {
     T t;
 
     template <class Self, class F>
-    auto transform(this Self&& self, F&& f) 
+    auto transform(this Self&& self, F&& f)
     -> std::invoke_result_t<F&&, std::copy_cvref_t<Self, T>>;
 };
 ```

@@ -75,12 +75,12 @@ What we really want is a way to use the default special member if the correspond
 One approach which at first seems possible is using `std::enable_if` to select between the default and custom copy constructor implementations depending on the properties of `T`:
 
 ```cpp
-template <class U = T, 
-          std::enable_if_t<std::is_copy_constructible_v<U> && 
+template <class U = T,
+          std::enable_if_t<std::is_copy_constructible_v<U> &&
                            std::is_trivially_copy_constructible_v<U>>* = nullptr>
 optional(optional const& rhs) = default;
 
-template <class U = T, 
+template <class U = T,
           std::enable_if_t<std::is_copy_constructible_v<U> &&
                            !std::is_trivially_copy_constructible_v<U>>* = nullptr>
 optional(optional const& rhs)

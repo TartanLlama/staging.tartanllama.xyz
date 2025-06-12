@@ -10,7 +10,6 @@ canonicalURL: https://tartanllama.xyz/posts/trip-reports/accuconf-2017-workshop-
 description: My introduction to Chapel
 ---
 
-
 This week I'm very excited to be at ACCUConf, which is the second large conference I've attended since starting my career. My first conf was EuroLLVM in Edinburgh, where around twenty of my colleagues were there alongside me. This time I'm on my own in a city I don't know, so I'm looking forward to being forced to meet new people rather than having somewhere to hide and use as an excuse!
 
 I'm going to be making notes on the talks which I attend, mostly for my own records, but hopefully others will find them useful too!
@@ -23,7 +22,8 @@ The tutorial was given by Brad Chamberlain, who is the technical lead for the Ch
 
 From the website:
 
->Chapel is a modern programming language that is...
+> Chapel is a modern programming language that is...
+>
 > - parallel: contains first-class concepts for concurrent and parallel computation
 > - productive: designed with programmability and performance in mind
 > - portable: runs on laptops, clusters, the cloud, and HPC systems
@@ -48,7 +48,7 @@ Maybe a parallel language for HPC sounds a bit scary, but it was ridiculously ea
 
 ## Interesting concepts
 
-One of the key language features of Chapel is the *domain*, which is essentially a description of the shape of the data you'll be operating on. This is fairly similar to the concept of an ND range in OpenCL.
+One of the key language features of Chapel is the _domain_, which is essentially a description of the shape of the data you'll be operating on. This is fairly similar to the concept of an ND range in OpenCL.
 
 ```chapel
 const D = {1..10, 1..10};
@@ -66,7 +66,7 @@ forall (x,y) in A do
 
 This will automatically distribute the work over whatever compute cores we have in our machine.
 
-My personal favourite feature was *promotion*, in which functions which take single elements over some type can be promoted automatically to functions which take multiple elements. Kind of like automatic vectorisation, but using multiple physical cores rather than vector units.
+My personal favourite feature was _promotion_, in which functions which take single elements over some type can be promoted automatically to functions which take multiple elements. Kind of like automatic vectorisation, but using multiple physical cores rather than vector units.
 
 ```chapel
 proc negate(ref x: real) {

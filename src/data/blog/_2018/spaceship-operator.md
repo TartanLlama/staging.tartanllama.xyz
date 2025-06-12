@@ -10,7 +10,6 @@ canonicalURL: https://tartanllama.xyz/posts/spaceship-operator
 description: C++20's feature for better comparisons
 ---
 
-
 You write a class. It has a bunch of member data. At some point, you realise that you need to be able to compare objects of this type. You sigh and resign yourself to writing six operator overloads for every type of comparison you need to make. Afterwards your fingers ache and your previously clean code is lost in a sea of functions which do essentially the same thing. If this sounds familiar, then C++20's spaceship operator is for you. This post will look at how the spaceship operator allows you to describe the strength of relations, write your own overloads, have them be automatically generated, and how correct, efficient two-way comparisons are automatically rewritten to use them.
 
 ## Relation Strength
