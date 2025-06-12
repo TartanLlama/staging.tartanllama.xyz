@@ -68,7 +68,7 @@ void give_head_scratches (Animal const& the_animal);
 
 This is quite verbose and repetitive. Ideally we’d be able to use the concept name directly in the function parameter list like this:
 
-```cppp
+```cpp
 void give_head_scratches (animal const& the_animal);
 ```
 

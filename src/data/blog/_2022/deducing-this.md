@@ -253,7 +253,7 @@ std::move(callback)(); // try-or-fail(rvalue)
 
 The question here is: how do we forward `m` based on the value category of the closure? Explicit object parameters give us the answer. Since a lambda generates a class with an `operator()` member function of the given signature, all the machinary I’ve just explained works for lambdas too.
 
-```cppp
+```cpp
 auto closure = [](this auto&& self) {
     //can use self inside the lambda
 };
@@ -293,7 +293,7 @@ struct Node {
 
 We can count the number of leaves like so:
 
-```cppp
+```cpp
 int num_leaves(Tree const& tree) {
     return std::visit(overload( //see below
         [](Leaf const&) { return 1; },
