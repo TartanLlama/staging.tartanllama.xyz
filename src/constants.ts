@@ -7,6 +7,8 @@ import IconWhatsapp from "@/assets/icons/IconWhatsapp.svg";
 import IconFacebook from "@/assets/icons/IconFacebook.svg";
 import IconTelegram from "@/assets/icons/IconTelegram.svg";
 import IconPinterest from "@/assets/icons/IconPinterest.svg";
+import IconBluesky from "@/assets/icons/IconBluesky.svg";
+import IconMastodon from "@/assets/icons/IconMastodon.svg";
 import { SITE } from "@/config";
 
 interface Social {
@@ -19,25 +21,31 @@ interface Social {
 export const SOCIALS: Social[] = [
   {
     name: "Github",
-    href: "https://github.com/satnaing/astro-paper",
+    href: "https://github.com/TartanLlama",
     linkTitle: `${SITE.title} on Github`,
     icon: IconGitHub,
   },
   {
-    name: "X",
-    href: "https://x.com/username",
-    linkTitle: `${SITE.title} on X`,
-    icon: IconBrandX,
+    name: "Bluesky",
+    href: "https://bsky.app/profile/tartanllama.xyz",
+    linkTitle: `${SITE.title} on Bluesky`,
+    icon: IconBluesky,
+  },
+    {
+    name: "Mastodon",
+    href: "https://mastodon.social/@TartanLlama",
+    linkTitle: `${SITE.title} on Mastodon`,
+    icon: IconMastodon,
   },
   {
     name: "LinkedIn",
-    href: "https://www.linkedin.com/in/username/",
+    href: "https://www.linkedin.com/in/sy-brand-36520857/",
     linkTitle: `${SITE.title} on LinkedIn`,
     icon: IconLinkedin,
   },
   {
     name: "Mail",
-    href: "mailto:yourmail@gmail.com",
+    href: "mailto:tartanllama@gmail.com",
     linkTitle: `Send an email to ${SITE.title}`,
     icon: IconMail,
   },

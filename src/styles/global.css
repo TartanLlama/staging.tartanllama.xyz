@@ -7,7 +7,7 @@
 html[data-theme="light"] {
   --background: #fdfdfd;
   --foreground: #282728;
-  --accent: #006cac;
+  --accent: #7d24a3;
   --muted: #e6e6e6;
   --border: #ece9e9;
 }
@@ -15,9 +15,9 @@ html[data-theme="light"] {
 html[data-theme="dark"] {
   --background: #212737;
   --foreground: #eaedf3;
-  --accent: #ff6b01;
+  --accent: #9e72ce;
   --muted: #343f60bf;
-  --border: #ab4b08;
+  --border: #453c49;
 }
 
 @theme inline {
@@ -66,4 +66,17 @@ html[data-theme="dark"] {
 /* Anything that has been anchored to should have extra scroll margin */
 :target {
   scroll-margin-block: 1rem;
+}
+
+
+@utility prose {
+    blockquote {
+        /* Disable adding quote marks to block-quotes: https://github.com/tailwindlabs/tailwindcss-typography/issues/66 */
+        p {
+            &:first-of-type::before,
+            &:last-of-type::after {
+                content: none;
+            }
+        }
+    }
 }
