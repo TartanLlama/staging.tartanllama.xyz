@@ -16,7 +16,7 @@ Talks are beginning to go online at the [ACCUConf YouTube channel](https://www.y
 
 Be sure to check out my [post]({% post_url 2017-04-27-accu-day-1 %}) on the pre-conference workshops if you haven't already.
 
-## To hell and back: One guitarist’s journey through modern software development - Russ Miles
+## To hell and back: One guitarist's journey through modern software development - Russ Miles
 
 The conference had a Rock theme this year, so Russ Miles kicked things off with a microservices parody of AC/DC's Highway to Hell. This was a really fun way to get things started and it ensured that everyone was already loosened up as the conference began.
 

@@ -292,9 +292,9 @@ That covers it for the detection idiom. This is a handy utility for clearing up 
 
 [^7]: [ACCU 2017: The Detection Idiom - a simpler way to SFINAE - Marshall Clow](https://www.youtube.com/watch?v=o1ekBpEFcPc)
 
-[^8]: [C++Now 2017: Marshall Clow “The 'Detection idiom:' A Better Way to SFINAE"](https://www.youtube.com/watch?v=U3jGdnRL3KI)
+[^8]: [C++Now 2017: Marshall Clow "The 'Detection idiom:' A Better Way to SFINAE"](https://www.youtube.com/watch?v=U3jGdnRL3KI)
 
-[^9]: [CppCon 2016: Isabella Muerte “No Concepts Beyond This Point: The Detection Idiom"](https://www.youtube.com/watch?v=VctviQl-SR4)
+[^9]: [CppCon 2016: Isabella Muerte "No Concepts Beyond This Point: The Detection Idiom"](https://www.youtube.com/watch?v=VctviQl-SR4)
 
 ---
 

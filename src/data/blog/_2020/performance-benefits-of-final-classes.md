@@ -58,7 +58,7 @@ int main() {
 }
 ```
 
-In this code, even though dog::speak is a virtual function, the only possible result of main is to output "woof". If you look at the [compiler output](https://godbolt.org/z/_ZJqvN) you’ll see that MSVC, GCC, and Clang all recognize this and inline the definition of `dog::speak` into main, avoiding the need for an indirect call.
+In this code, even though dog::speak is a virtual function, the only possible result of main is to output "woof". If you look at the [compiler output](https://godbolt.org/z/_ZJqvN) you'll see that MSVC, GCC, and Clang all recognize this and inline the definition of `dog::speak` into main, avoiding the need for an indirect call.
 
 ## The Benefit of `final`
 
@@ -97,7 +97,7 @@ rex_jmp QWORD PTR [rax]
 
 This code loads the vtable from `d`, then makes an indirect call to `derived::f` through the function pointer stored at the relevant location.
 
-The cost of a pointer load and jump may not look like much since it’s just two instructions, but remember that this may involve a branch misprediction and/or instruction cache miss, which would result in a pipeline stall. Furthermore, if there was more code in `call_f` or functions which call it, the compiler may be able to optimize it much more aggressively given the full visibility of the code which will be executed and the additional analysis which this enables.
+The cost of a pointer load and jump may not look like much since it's just two instructions, but remember that this may involve a branch misprediction and/or instruction cache miss, which would result in a pipeline stall. Furthermore, if there was more code in `call_f` or functions which call it, the compiler may be able to optimize it much more aggressively given the full visibility of the code which will be executed and the additional analysis which this enables.
 
 ## Conclusion
 

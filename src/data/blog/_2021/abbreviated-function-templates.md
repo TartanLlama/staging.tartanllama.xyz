@@ -29,7 +29,7 @@ You can only call this lambdas with arguments of `type_1` and `type_2`. However 
 [captures] (auto param_1, auto param_2) { body(param_1, param_2); }
 ```
 
-Now you can pass any types as the arguments. C++20’s abbreviated function templates allows you to apply this kind of syntax to function templates.
+Now you can pass any types as the arguments. C++20's abbreviated function templates allows you to apply this kind of syntax to function templates.
 
 In C++17 you might write a function to give animals head scratches as a function template, so it can be called with any type of animal:
 
@@ -48,7 +48,7 @@ This version is less verbose, requires coming up with fewer names, and is more c
 
 ## Constrained Auto
 
-There’s a problem with the above function template though: according to the declaration we can pass literally anything to it. We can happily make calls that look like this:
+There's a problem with the above function template though: according to the declaration we can pass literally anything to it. We can happily make calls that look like this:
 
 ```cpp
 give_head_scratches(42);
@@ -57,7 +57,7 @@ give_head_scratches(blog_post);
 give_head_scratches(the_platonic_ideal_of_a_chair);
 ```
 
-They might compile and do something weird, or they might fail to compile due to the implementation of the template doing something which those types don’t support. Ideally we’d want to both document the interface of this function template with what kind of types it supports and also give the compiler the ability to give detailed errors when the declaration is instantiated with in incompatible type.
+They might compile and do something weird, or they might fail to compile due to the implementation of the template doing something which those types don't support. Ideally we'd want to both document the interface of this function template with what kind of types it supports and also give the compiler the ability to give detailed errors when the declaration is instantiated with in incompatible type.
 
 C++20 gives us [Concepts](https://cppreference.com/w/cpp/language/constraints.html) to help solve this problem. If we have some `animal` concept which defines what interface a type representing an animal should have then we can use it like so:
 
@@ -66,13 +66,13 @@ template <animal Animal>
 void give_head_scratches (Animal const& the_animal);
 ```
 
-This is quite verbose and repetitive. Ideally we’d be able to use the concept name directly in the function parameter list like this:
+This is quite verbose and repetitive. Ideally we'd be able to use the concept name directly in the function parameter list like this:
 
 ```cpp
 void give_head_scratches (animal const& the_animal);
 ```
 
-However, this syntax was rejected from standardization, because you can’t tell whether this is a function template or a regular function without knowing whether `animal` is a type or a concept.
+However, this syntax was rejected from standardization, because you can't tell whether this is a function template or a regular function without knowing whether `animal` is a type or a concept.
 
 Fortunately, a version of this syntax was included in C++20 which uses the `auto` keyword again:
 

@@ -127,7 +127,7 @@ As noted in the value category descriptions earlier, prvalues exist for purposes
 
 That's a better name for this feature. Not guaranteed copy elision. **Deferred temporary materialization**.
 
-Temporary materialization creates a temporary object from a prvalue, resulting in an xvalue. The most common places it occurs are when binding a reference to or performing member access on a prvalue. If a reference is bound to the prvalue, the materialized temporary’s lifetime is extended to that of the reference (this is unchanged from C++11, but worth repeating). If a prvalue initializes a class type of the same type as the prvalue, then the destination object is initialized directly; no temporary required.
+Temporary materialization creates a temporary object from a prvalue, resulting in an xvalue. The most common places it occurs are when binding a reference to or performing member access on a prvalue. If a reference is bound to the prvalue, the materialized temporary's lifetime is extended to that of the reference (this is unchanged from C++11, but worth repeating). If a prvalue initializes a class type of the same type as the prvalue, then the destination object is initialized directly; no temporary required.
 
 Some examples:
 

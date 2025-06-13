@@ -13,11 +13,11 @@ description: Why triviality matters and how you can propagate it
 
 _Originally published on [Microsoft's C++ blog](https://devblogs.microsoft.com/cppblog/conditionally-trivial-special-member-functions/)._
 
-The C++ standards committee is currently focusing on adding features to the language which can simplify code. One small example of this in C++20 is [conditionally trivial special member functions](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p0848r3.html). Its benefit isn’t immediately obvious unless you’ve been deep down the rabbit hole of high-performance library authoring, so I’ve written this post to show you how it can make certain generic types more efficient without requiring huge amounts of template magic.
+The C++ standards committee is currently focusing on adding features to the language which can simplify code. One small example of this in C++20 is [conditionally trivial special member functions](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p0848r3.html). Its benefit isn't immediately obvious unless you've been deep down the rabbit hole of high-performance library authoring, so I've written this post to show you how it can make certain generic types more efficient without requiring huge amounts of template magic.
 
 ## The Problem
 
-Types which wrap other types are common in the C++ world: pairs, tuples, optionals, adapters, etc. For some of these your implementation can’t use the default special member functions (default constructor, copy/move constructor, copy/move assignment, destructor) because there’s some additional work that needs to be done. Take for example this `std::optional`-like type:
+Types which wrap other types are common in the C++ world: pairs, tuples, optionals, adapters, etc. For some of these your implementation can't use the default special member functions (default constructor, copy/move constructor, copy/move assignment, destructor) because there's some additional work that needs to be done. Take for example this `std::optional`-like type:
 
 ```cpp
 template <typename T>
@@ -32,7 +32,7 @@ struct optional {
 
 It has a `bool` member to say whether it is currently storing a value, and a union member which either stores a value or stores a dummy member when the optional is empty.
 
-The default special members won’t work here: when the union member has non-trivial constructors and destructors, we need to explicitly handle these in our optional type. Focusing on the copy constructor, here’s a potential implementation:
+The default special members won't work here: when the union member has non-trivial constructors and destructors, we need to explicitly handle these in our optional type. Focusing on the copy constructor, here's a potential implementation:
 
 ```cpp
    optional(optional const& rhs)
@@ -46,7 +46,7 @@ The default special members won’t work here: when the union member has non-tri
 
 We check if the `rhs` has a value, and if it does, we use it to copy-construct our own value.
 
-But there’s a performance issue here. Say we make a copy of an `optional<int>`, like this:
+But there's a performance issue here. Say we make a copy of an `optional<int>`, like this:
 
 ```
 optional<int> make_copy(optional<int> const& o) {
@@ -60,7 +60,7 @@ Since `int`s are [trivially copy constructible](https://en.cppreference.com/w/cp
       movzx eax, BYTE PTR [rdx]   ; load o
       mov BYTE PTR [rcx], al      ; copy.has_value_ = rhs.has_value_
       test al, al                 ; test rhs.has_value_
-      je SHORT $EMPTY             ; if it’s empty, jump to the end
+      je SHORT $EMPTY             ; if it's empty, jump to the end
       mov eax, DWORD PTR [rdx+4]  ; load rhs.value_
       mov DWORD PTR [rcx+4], eax  ; store to copy.value_
 $EMPTY:
@@ -92,9 +92,9 @@ optional(optional const& rhs)
 }
 ```
 
-Unfortunately, special members other than the default constructor cannot be templates, so this doesn’t work.
+Unfortunately, special members other than the default constructor cannot be templates, so this doesn't work.
 
-The common solution which does work is to rip the storage and special members of the template into base classes and select which to inherit from by checking the relevant type traits. The implementation of this is fairly hairy, so I’ve explained it down at the bottom of this post for those who want to see it.
+The common solution which does work is to rip the storage and special members of the template into base classes and select which to inherit from by checking the relevant type traits. The implementation of this is fairly hairy, so I've explained it down at the bottom of this post for those who want to see it.
 
 If we make this change, then the assembly for `make_copy` becomes this:
 
@@ -109,7 +109,7 @@ Now we have more efficient code generated, but a whole load of tricky C++ which 
 
 ## C++20 Solution
 
-Although our `std::enable_if` solution from above wouldn’t work because those functions can’t be templates, you can constrain non-template functions using C++20 concepts:
+Although our `std::enable_if` solution from above wouldn't work because those functions can't be templates, you can constrain non-template functions using C++20 concepts:
 
 ```cpp
 optional(optional const&) = default;
@@ -124,11 +124,11 @@ requires std::copy_constructible<T> && !std::is_trivially_copy_constructible_v<T
 }
 ```
 
-Now `optional<T>` is trivially copy constructible if and only if `T` is, with minimal template magic. We’ve got both efficient code generation and C++ which can be understood and maintained a lot easier than before.
+Now `optional<T>` is trivially copy constructible if and only if `T` is, with minimal template magic. We've got both efficient code generation and C++ which can be understood and maintained a lot easier than before.
 
 ## The Hairy C++17 Implementation
 
-As promised, here’s how you’d do this in C++17.
+As promised, here's how you'd do this in C++17.
 
 We start off by tearing the storage out into its own base class:
 
@@ -146,7 +146,7 @@ struct optional_storage_base {
 };
 ```
 
-We then write a base class for the copy constructor for when `T` is trivially copy constructible, and we introduce a default template parameter which we’ll specialize later.
+We then write a base class for the copy constructor for when `T` is trivially copy constructible, and we introduce a default template parameter which we'll specialize later.
 
 ```
 template <class T, bool = std::is_trivially_copy_constructible_v<T>>
@@ -194,4 +194,4 @@ struct optional : optional_copy_base<T> {
 };
 ```
 
-Then we do this all over again for the move constructor, destructor, copy assignment, and move assignment operators. This is exactly what [standard library implementors have to go](https://github.com/microsoft/STL/blob/main/stl/inc/optional) through to get the best codegen possible at the expense of implementation and maintenance burden. It’s not fun, [trust me](https://github.com/TartanLlama/optional).
+Then we do this all over again for the move constructor, destructor, copy assignment, and move assignment operators. This is exactly what [standard library implementors have to go](https://github.com/microsoft/STL/blob/main/stl/inc/optional) through to get the best codegen possible at the expense of implementation and maintenance burden. It's not fun, [trust me](https://github.com/TartanLlama/optional).

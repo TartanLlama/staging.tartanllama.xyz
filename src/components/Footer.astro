@@ -17,10 +17,14 @@ const { noMarginTop = false } = Astro.props;
     class="flex flex-col items-center justify-between py-6 sm:flex-row-reverse sm:py-4"
   >
     <Socials centered />
+    <div>
+      Based on <a
+        class="inline-block text-accent decoration-dashed underline-offset-4 hover:underline"
+        href="https://astro-paper.pages.dev">AstroPaper</a
+      >
+    </div>
     <div class="my-2 flex flex-col items-center whitespace-nowrap sm:flex-row">
-      <span>Copyright &#169; {currentYear}</span>
-      <span class="hidden sm:inline">&nbsp;|&nbsp;</span>
-      <span>All rights reserved.</span>
+      <span>&#169; {currentYear} Sy Brand</span>
     </div>
   </div>
 </footer>

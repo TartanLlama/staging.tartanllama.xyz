@@ -33,7 +33,7 @@ Under some circumstances, these two forms are different. Specifically, the latte
 
 > [[except.ctor]/3](https://timsong-cpp.github.io/cppwp/n4140/except.ctor#3):
 >
-> The process of calling destructors for automatic objects constructed on the path from a try block to a _throw-expression_ is called “stack unwinding.” [...]
+> The process of calling destructors for automatic objects constructed on the path from a try block to a _throw-expression_ is called "stack unwinding." [...]
 
 The above paragraphs mandate stack unwinding when control passes to the handler (the `catch` block).
 

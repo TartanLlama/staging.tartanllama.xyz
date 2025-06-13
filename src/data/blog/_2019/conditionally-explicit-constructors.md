@@ -63,7 +63,7 @@ struct wrapper {
 };
 ```
 
-This gives our type the desired behavior. However, it’s not very satisfactory: we now need two overloads for what should really be one and we’re using SFINAE to choose between them, which means we take hits on compile-time and code clarity.`explicit(bool)` solves both problems by allowing you to lift the convertibility condition into the `explicit` specifier:
+This gives our type the desired behavior. However, it's not very satisfactory: we now need two overloads for what should really be one and we're using SFINAE to choose between them, which means we take hits on compile-time and code clarity.`explicit(bool)` solves both problems by allowing you to lift the convertibility condition into the `explicit` specifier:
 
 ```cpp
 template<class T>
